@@ -1,0 +1,23 @@
+#pythonのバージョン3.7-alpineイメージを使用する
+FROM python:3
+
+#プロジェクトの管理者が誰かを記載する。
+#LABEL maintainer = "samplejp<sample.com>"
+
+#標準出力に出力されるバッファを無効化する('1'じゃなくてもいい)
+ENV PYTHONBUFFERED 1
+
+#ソース側のマシンにあるrequirements.txtをImage側のマシンへコピーする。
+RUN mkdir code
+COPY ./requirements.txt /code/requirements.txt
+
+#pipコマンドを最新にし、requirements.txtファイル内のパッケージをpipインストールする。
+RUN pip install --upgrade pip && pip install -r /code/requirements.txt
+
+
+# "user"ユーザーを作成する。
+#RUN adduser -D user
+# 以降のコマンドの実行者を"root"から"user"ユーザーに変更する。
+#USER user
+
+WORKDIR /code
