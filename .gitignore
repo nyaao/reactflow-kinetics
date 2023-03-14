@@ -3,3 +3,4 @@ django/API/API/__pycache__
 django/API/App/__pycache__
 django/API/App/migrations
 /code/build/
+/code/node_modules/
