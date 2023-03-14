@@ -167,3 +167,11 @@ export const AntSwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
+// 速度定数の下付きNoを取得
+// NodesをReactionNodeをID昇順でソートした後に、No割当て
+const getReactionRateConstantNo=(nodes:Node[],node:Node)=>{
+  const reactionNodes = nodes.filter(n=>n.type==="reaction")
+  const sortedReactionNodes = [...reactionNodes].sort(function(a,b){return Number(a.id)-Number(b.id)})
+  const reactionRateConstantList = sortedReactionNodes.map((rn,i)=>({"id":rn.id,"ReactionRateConstantNo":i}))
+  console.log(reactionRateConstantList.filter(n=>n.id===node.id)[0].ReactionRateConstantNo);
+}
