@@ -55,7 +55,9 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_WHITELIST = [
      'http://127.0.0.1:3001',
-     'http://localhost:3001'
+     'http://127.0.0.1:3000',
+     'http://localhost:3001',
+     'http://localhost:3000',
 ]
 
 ROOT_URLCONF = 'API.urls'
@@ -84,14 +86,13 @@ WSGI_APPLICATION = 'API.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        'ENGINE': 'django.db.backends.postgresql',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'db',
-        'PORT': 5432,
+        # dbを使用しないときはここをコメントアウト
+        # 'ENGINE': 'django.db.backends.postgresql',
+        # 'NAME': 'postgres',
+        # 'USER': 'postgres',
+        # 'PASSWORD': 'postgres',
+        # 'HOST': 'db',
+        # 'PORT': 5432,
     }
 }
 

@@ -3,7 +3,7 @@ from rest_framework.generics import ListCreateAPIView    # API
 from rest_framework.views import APIView    # API
 from rest_framework.response import Response
 from .serializers import SampleSerializer                # APIで渡すデータをJSON,XML変換
-from . import myNetworkX
+from . import equation
 
 class api(ListCreateAPIView):
     # 対象とするモデルのオブジェクトを定義
@@ -20,6 +20,5 @@ class apitest(APIView):
         return Response("test")
 
     def post(self, request, format=None):
-        graph = myNetworkX.NX4ReactFlow(request.data["Nodes"],request.data["Edges"])
-        graph.test()
-        return Response("post")
+        res = equation.lambda_handler(request.data,"")
+        return Response(res)
