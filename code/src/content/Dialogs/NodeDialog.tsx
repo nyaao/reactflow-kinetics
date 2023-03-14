@@ -6,12 +6,13 @@ import { NumberFormatValues, NumericFormat } from 'react-number-format';
 import {Button,Typography,TextField, Stack} from '@mui/material';
 import { Node } from 'reactflow';
 import { useState } from 'react';
-import { AntSwitch } from '../utils';
+import { AntSwitch, getReactionRateConstantNo } from '../utils';
 
 type Props = {
   open: boolean,
   onClose: (newnode?: Node) => void,
   node:Node
+  nodes:Node[]
 }
 
 export const NodeDialog=(props:Props)=>{
@@ -110,7 +111,7 @@ export const NodeDialog=(props:Props)=>{
               ){
               return <div key={k}>
                       <NumericFormat
-                        label={tmpNode.type==="reaction" ? "k_" + tmpNode.id : k}
+                        label={tmpNode.type==="reaction" ? "k_" + getReactionRateConstantNo(props.nodes,tmpNode) : k}
                         customInput={TextField}
                         value={tmpNode.data[k]}
                         onValueChange={(values)=>handleOnValueChange(values,k)}
