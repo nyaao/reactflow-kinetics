@@ -47,9 +47,9 @@ export default function ContentMain(){
       const sourceNodeType = nodes.filter(n=>n.id===newedgeparams.source)[0].type
       const targetNodeType = nodes.filter(n=>n.id===newedgeparams.target)[0].type
       if(
-        sourceNodeType==='reactant' && targetNodeType==='intermediate' ||
-        sourceNodeType==='reactant' && targetNodeType==='product' ||
-        sourceNodeType==='reaction' && targetNodeType==='reaction'
+        (sourceNodeType==='reactant' && targetNodeType==='intermediate') ||
+        (sourceNodeType==='reactant' && targetNodeType==='product') ||
+        (sourceNodeType==='reaction' && targetNodeType==='reaction')
       )return;
       setEdges((eds)=>addEdge(newedgeparams,eds));
     }
@@ -147,13 +147,13 @@ export default function ContentMain(){
         const rereading_integrand = Object.assign({},...res.newnodes
           .filter((nn)=>nn.type!=='reaction')
           .map((nn)=>(
-          {["Y\["+nn.data.integrand_id+"\]"]:"\["+nn.data.symbol+"\]"}
+          {["Y["+nn.data.integrand_id+"]"]:"["+nn.data.symbol+"]"}
         )));
 
         const rereading_reaction = Object.assign({},...res.newnodes
           .filter((nn)=>nn.type==='reaction')
           .map((nn)=>(
-          {["k\["+nn.data.reaction_id+"\]"]:"k_"+nn.data.reaction_id}
+          {["k["+nn.data.reaction_id+"]"]:"k_"+nn.data.reaction_id}
         )));        
 
         const rereading=Object.assign({},rereading_integrand,rereading_reaction)

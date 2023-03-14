@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { createDefaultEdgeParams, createDefaultNodeParams } from './default';
+import { createDefaultNodeParams } from './default';
 import { Node, Edge } from 'reactflow';
 
 export const calc=async(nodes:Node[],edges:Edge[])=>{

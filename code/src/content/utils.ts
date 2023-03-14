@@ -1,8 +1,8 @@
 import { styled, Switch } from "@mui/material";
-import { useState, useEffect, useLayoutEffect, ChangeEvent } from "react";
+import { useState, useEffect, useLayoutEffect, } from "react";
 import { Connection, Edge,Node } from "reactflow";
-import { createBackgroundNodeParams, createDefaultEdgeParams, createDefaultNodeParams, setId } from "./default";
-import { LoadExcelData } from "./FileHandler/FileHandler";
+import { createDefaultEdgeParams, createDefaultNodeParams} from "./default";
+
 
 // 配列から最大値、最小値を取得する関数。この書き方の方が安全らしい・・・
 export const getMaxFromArray=(arr:number[])=>{
