@@ -2,9 +2,11 @@
 Django==3.1
 psycopg2
 
-# 他にインストールしたいものがあればここに記載する。
+# REST APIに必要なもの。
 djangorestframework
 django-cors-headers
+
+# 他にインストールしたいものがあればここに記載する。
 networkx
 matplotlib
 
