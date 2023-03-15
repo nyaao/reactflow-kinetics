@@ -23,7 +23,7 @@ import { EdgeTypes, NodeTypes,} from './default';
 import './default.ts'
 import { myTheme } from './myTheme';
 import 'reactflow/dist/style.css';
-import { calc } from './submit';
+import { calc, calc2 } from './submit';
 import { SchemeDialog } from './Dialogs/SchemeDialog';
 
 
@@ -165,6 +165,12 @@ export default function ContentMain(){
         setSchemeData(scheme);
         
         }}>calc</Button>
+      
+      <Button onClick={()=>{
+        if(rereadingData!==null && schemeData!==null){
+          calc2(rereadingData, schemeData);
+        }
+        }}>calc2</Button>
             
       <MyAppBar
         handleImport={handleImport}
