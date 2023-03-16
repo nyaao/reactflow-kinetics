@@ -59,7 +59,7 @@ export const NodeDialog=(props:Props)=>{
         Object.assign({},
         tmpNode.data,
         labeldata,
-        {[k]:values.value}
+        {[k]:Number(values.value)}
       )
       })
     setTmpNode(newtmpnode)
