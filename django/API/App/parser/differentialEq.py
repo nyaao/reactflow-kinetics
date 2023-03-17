@@ -59,24 +59,32 @@ class DiffEqOptTool():
 
 def lambda_handler(event, context):
     #データ格納
-    rereading = event["body"]["rereading"]
     scheme = event["body"]["scheme"]
+    init_y = event["body"]["init_y"]
+    params = event["body"]["params"]
 
-    time_ = np.linspace(0,100,101)
-    init_y = [100,100,0]
-    org_params = [0.1]
+    print(scheme)
+    print(init_y)
+    print(params)
 
-    print(rereading)
-    expressions = [re.sub('^\+','',expression) for expression in scheme.values()]
-    print(expressions)
+
+
+
+    # time_ = np.linspace(0,100,101)
+    # init_y = [100,100,0]
+    # org_params = [0.1]
+
+    # print(rereading)
+    # expressions = [re.sub('^\+','',expression) for expression in scheme.values()]
+    # print(expressions)
     
-    def funcEq(T, Y, PARAMS):
-        parser = MyTransfomer.EquationParser(PARAMS,Y) # parseする前に各ステップにおけるYを格納する必要があるため、ここでパーサーをインスタンス化する必要がある
-        ret = [parser.parse(expr) for expr in expressions]
-        return ret
+    # def funcEq(T, Y, PARAMS):
+    #     parser = MyTransfomer.EquationParser(PARAMS,Y) # parseする前に各ステップにおけるYを格納する必要があるため、ここでパーサーをインスタンス化する必要がある
+    #     ret = [parser.parse(expr) for expr in expressions]
+    #     return ret
     
-    solver = DiffEqOptTool(funcEq,len(org_params),time_,init_y)
-    print(solver.solveDiffEq(org_params))
+    # solver = DiffEqOptTool(funcEq,len(org_params),time_,init_y)
+    # print(solver.solveDiffEq(org_params))
 
 
 if __name__=='__main__':

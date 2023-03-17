@@ -47,7 +47,7 @@ export const SchemeDialog=(props:Props)=>{
               .map((key)=>(
                 <MathJax key={key} >
                   {(props.schemedata!==null && props.rereadingdata!==null) && 
-                    ("\\(\\frac{d["+key+"]}{dt} = "+handleRereading(props.schemedata[key]+"\\)",props.rereadingdata))}
+                    ("\\(\\frac{d"+props.rereadingdata[key]+"}{dt} = "+handleRereading(props.schemedata[key]+"\\)",props.rereadingdata))}
                 </MathJax>
               ))
             }

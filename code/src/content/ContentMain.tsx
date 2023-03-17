@@ -18,7 +18,7 @@ import { MyAppBar } from './MyAppBar';
 import { NodeDialog } from './Dialogs/NodeDialog';
 import { EdgeDialog } from './Dialogs/EdgeDialog';
 import { ExportExcel, ImportBackgroundNode, ImportExcel } from './FileHandler/FileHandler';
-import { getNewNode, getNewEdgeParams, getKineticConstantNo } from './utils';
+import { getNewNode, getNewEdgeParams, getKineticConstantNo, getIntegrandNo } from './utils';
 import { EdgeTypes, NodeTypes,} from './default';
 import './default.ts'
 import { myTheme } from './myTheme';
@@ -132,17 +132,13 @@ export default function ContentMain(){
       <Button onClick={()=>{
         console.log("Nodes",nodes);
         console.log("Edges",edges);
+        console.log("reredingData",rereadingData);
+        console.log("schemeData",schemeData);
       }}>test</Button>
 
       <Button onClick={async()=>{
         const res = await calc(nodes,edges);
         console.log(res);
-        const scheme = Object.assign({},...res.newnodes
-          .filter((nn)=>nn.type!=='reaction')                    
-          .map((nn)=>(
-          {[nn.data.symbol]:nn.data.equation}
-        )));
-
         
         const rereading_integrand = Object.assign({},...res.newnodes
           .filter((nn)=>nn.type!=='reaction')
@@ -158,6 +154,12 @@ export default function ContentMain(){
 
         const rereading=Object.assign({},rereading_integrand,rereading_reaction)
 
+        const scheme = Object.assign({},...res.newnodes
+          .filter((nn)=>nn.type!=='reaction')                    
+          .map((nn)=>(
+          {["Y["+getIntegrandNo(nodes,nn)+"]"]:nn.data.equation}
+        )));
+
         console.log(scheme);
         console.log(rereading);
         setOpenSchemeDialog(true);
@@ -170,11 +172,11 @@ export default function ContentMain(){
         //getReactionRateConstantNoに相当するractant,intermediate,productのNo取得が必要
         if(rereadingData!==null && schemeData!==null){
           const initY:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type!=="reaction")
-                                                  .map(rip=>({["["+getKineticConstantNo(nodes,rip)+"]"]:rip.data.initialConcentration})))
+                                                  .map(rip=>({["Y["+getIntegrandNo(nodes,rip)+"]"]:rip.data.initialConcentration})))
 
           const params:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type==='reaction')
                                                    .map(rn=>({["k["+getKineticConstantNo(nodes,rn)+"]"]:rn.data.reactionRateConstant})))
-          calc2(rereadingData, schemeData,initY,params);
+          calc2(schemeData,initY,params);
         }
         }}>calc2</Button>
             
