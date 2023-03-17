@@ -169,7 +169,7 @@ export default function ContentMain(){
         }}>calc</Button>
       
       <Button onClick={()=>{
-        //getReactionRateConstantNoに相当するractant,intermediate,productのNo取得が必要
+
         if(rereadingData!==null && schemeData!==null){
           const initY:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type!=="reaction")
                                                   .map(rip=>({["Y["+getIntegrandNo(nodes,rip)+"]"]:rip.data.initialConcentration})))
