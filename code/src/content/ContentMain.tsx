@@ -18,7 +18,7 @@ import { MyAppBar } from './MyAppBar';
 import { NodeDialog } from './Dialogs/NodeDialog';
 import { EdgeDialog } from './Dialogs/EdgeDialog';
 import { ExportExcel, ImportBackgroundNode, ImportExcel } from './FileHandler/FileHandler';
-import { getNewNode, getNewEdgeParams } from './utils';
+import { getNewNode, getNewEdgeParams, getKineticConstantNo } from './utils';
 import { EdgeTypes, NodeTypes,} from './default';
 import './default.ts'
 import { myTheme } from './myTheme';
@@ -167,8 +167,14 @@ export default function ContentMain(){
         }}>calc</Button>
       
       <Button onClick={()=>{
+        //getReactionRateConstantNoに相当するractant,intermediate,productのNo取得が必要
         if(rereadingData!==null && schemeData!==null){
-          calc2(rereadingData, schemeData);
+          const initY:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type!=="reaction")
+                                                  .map(rip=>({["["+getKineticConstantNo(nodes,rip)+"]"]:rip.data.initialConcentration})))
+
+          const params:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type==='reaction')
+                                                   .map(rn=>({["k["+getKineticConstantNo(nodes,rn)+"]"]:rn.data.reactionRateConstant})))
+          calc2(rereadingData, schemeData,initY,params);
         }
         }}>calc2</Button>
             

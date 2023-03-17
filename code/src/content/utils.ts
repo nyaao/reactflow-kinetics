@@ -169,9 +169,19 @@ export const AntSwitch = styled(Switch)(({ theme }) => ({
 
 // 速度定数の下付きNoを取得
 // NodesをReactionNodeをID昇順でソートした後に、No割当て
-export const getReactionRateConstantNo=(nodes:Node[],node:Node)=>{
+export const getKineticConstantNo=(nodes:Node[],node:Node)=>{
   const reactionNodes = nodes.filter(n=>n.type==="reaction")
   const sortedReactionNodes = [...reactionNodes].sort(function(a,b){return Number(a.id)-Number(b.id)})
-  const reactionRateConstantList = sortedReactionNodes.map((rn,i)=>({"id":rn.id,"ReactionRateConstantNo":i}))
-  return reactionRateConstantList.filter(n=>n.id===node.id)[0].ReactionRateConstantNo;
+  const kineticConstantList = sortedReactionNodes.map((rn,i)=>({"id":rn.id,"kineticConstantNo":i}))
+  return kineticConstantList.filter(n=>n.id===node.id)[0].kineticConstantNo;
 }
+
+// 被積分変数（Y)の下付きNoを取得
+// ReactionNode以外のNodeをID昇順でソートした後に、No割当て
+export const getIntegratedVariableNo=(nodes:Node[],node:Node)=>{
+  const integratedNodes = nodes.filter(n=>n.type!=="reaction")
+  const sortedIntegratedNodes = [...integratedNodes].sort(function(a,b){return Number(a.id)-Number(b.id)})
+  const integratedValiableList = sortedIntegratedNodes.map((rn,i)=>({"id":rn.id,"IntegratedVariableNo":i}))
+  return integratedValiableList.filter(n=>n.id===node.id)[0].IntegratedVariableNo;
+}
+
