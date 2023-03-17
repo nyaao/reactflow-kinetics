@@ -9,6 +9,9 @@ django-cors-headers
 # 他にインストールしたいものがあればここに記載する。
 networkx
 matplotlib
+scipy
+lark
+optuna
 
 # django[argon2]
 # bcrypt
