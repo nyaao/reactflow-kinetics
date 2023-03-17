@@ -88,7 +88,7 @@ def lambda_handler(event, context):
         return ret
     
     solver = DiffEqOptTool(funcEq,len(org_params),time_,init_y)
-    print(solver.solveDiffEq(org_params))
+    return solver.solveDiffEq(org_params)
 
 
 if __name__=='__main__':

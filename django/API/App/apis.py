@@ -29,5 +29,5 @@ class parseDifferentialEq(APIView):
         return Response("test")
     
     def post(self, request, format=None):
-        differentialEq.lambda_handler(request.data,"")
-        return Response("diff")
+        res = differentialEq.lambda_handler(request.data,"")
+        return Response(res)

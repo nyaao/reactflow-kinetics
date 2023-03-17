@@ -23,6 +23,6 @@ export const calc=async(nodes:Node[],edges:Edge[])=>{
     //   createDefaultNodeParams(n.type as string, n.position),
     //   {data:Object.assign({},n.data,retnodes.filter(rn=>rn.id===n.id)[0]["data"])}
     // )));
-    // return {newnodes:newnodes}
+    return res
     
   }  

@@ -25,6 +25,7 @@ import { myTheme } from './myTheme';
 import 'reactflow/dist/style.css';
 import { calc, calc2 } from './submit';
 import { SchemeDialog } from './Dialogs/SchemeDialog';
+import { CalcResultsDialog } from './Dialogs/CalcResultsDialog';
 
 
 
@@ -39,6 +40,7 @@ export default function ContentMain(){
   const [openSchemeDialog, setOpenSchemeDialog] = useState<boolean>(false);
   const [schemeData, setSchemeData] = useState<{[key:string]:string}|null>(null);
   const [rereadingData, setRereadingData] = useState<{[key:string]:string}|null>(null);
+  const [calculatedData, setCalculatedData] = useState<{[key:number]:number[]}[]>([]);
 
 
   // Edgeの追加処理
@@ -134,6 +136,7 @@ export default function ContentMain(){
         console.log("Edges",edges);
         console.log("reredingData",rereadingData);
         console.log("schemeData",schemeData);
+        console.log(calculatedData);
       }}>test</Button>
 
       <Button onClick={async()=>{
@@ -168,7 +171,7 @@ export default function ContentMain(){
         
         }}>calc</Button>
       
-      <Button onClick={()=>{
+      <Button onClick={async()=>{
 
         if(rereadingData!==null && schemeData!==null){
           const initY:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type!=="reaction")
@@ -176,7 +179,9 @@ export default function ContentMain(){
 
           const params:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type==='reaction')
                                                    .map(rn=>({["k["+getKineticConstantNo(nodes,rn)+"]"]:rn.data.reactionRateConstant})))
-          calc2(schemeData,initY,params);
+          const res = await calc2(schemeData,initY,params);
+          console.log(res.data)
+          setCalculatedData(res.data);
         }
         }}>calc2</Button>
             
@@ -222,6 +227,7 @@ export default function ContentMain(){
                 {doubleClickedNode!==null && <NodeDialog open={true} onClose={(node)=>handleNodeDialogClose(node)} node={doubleClickedNode} nodes={nodes}/>}
                 {doubleClickedEdge!==null && <EdgeDialog open={true} onClose={(edge)=>handleEdgeDialogClose(edge)} edge={doubleClickedEdge}/>}
                 {openSchemeDialog && <SchemeDialog open={true} onClose={()=>setOpenSchemeDialog(false)} schemedata={schemeData} rereadingdata={rereadingData}/>}
+                {Object.keys(calculatedData).length >0 && <CalcResultsDialog open={true} onClose={()=>setCalculatedData([])} />}
               </div>
             </ReactFlowProvider>
           </Grid>
