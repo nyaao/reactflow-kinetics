@@ -27,7 +27,7 @@ export const CalcResultsDialog=(props:Props)=>{
             <TableHead>
               <TableRow>
                 <TableCell>Time</TableCell>
-                {props.integrand.map((i)=><TableCell align="right">{i}</TableCell>)}
+                {props.integrand.map((i)=><TableCell key={i} align="right">{i}</TableCell>)}
               </TableRow>
             </TableHead>
             <TableBody>

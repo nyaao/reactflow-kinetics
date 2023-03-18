@@ -53,7 +53,10 @@ export const createDefaultNodeParams=(type:string,position:any)=>{
     position: position,
     data: type==='reaction' 
       ? Object.assign({},{label:id},{src:""},nodeDataDefault,{kineticConstant:0.05},{initialConcentration:"-"})
-      : Object.assign({},{label:id},{src:""},nodeDataDefault,{kineticConstant:"-"},{initialConcentration:0.1}),
+      : (type==='reactant' 
+        ? Object.assign({},{label:id},{src:""},nodeDataDefault,{kineticConstant:"-"},{initialConcentration:0.1})
+        : Object.assign({},{label:id},{src:""},nodeDataDefault,{kineticConstant:"-"},{initialConcentration:0.0})
+      ),
     zIndex:100,
   }
 };
