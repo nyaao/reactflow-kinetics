@@ -40,7 +40,7 @@ export default function ContentMain(){
   const [openSchemeDialog, setOpenSchemeDialog] = useState<boolean>(false);
   const [schemeData, setSchemeData] = useState<{[key:string]:string}|null>(null);
   const [rereadingData, setRereadingData] = useState<{[key:string]:string}|null>(null);
-  const [calculatedData, setCalculatedData] = useState<{[key:number]:number[]}[]>([]);
+  const [calculatedData, setCalculatedData] = useState<{[key:number]:number[]}>({});
 
 
   // Edgeの追加処理
@@ -227,7 +227,7 @@ export default function ContentMain(){
                 {doubleClickedNode!==null && <NodeDialog open={true} onClose={(node)=>handleNodeDialogClose(node)} node={doubleClickedNode} nodes={nodes}/>}
                 {doubleClickedEdge!==null && <EdgeDialog open={true} onClose={(edge)=>handleEdgeDialogClose(edge)} edge={doubleClickedEdge}/>}
                 {openSchemeDialog && <SchemeDialog open={true} onClose={()=>setOpenSchemeDialog(false)} schemedata={schemeData} rereadingdata={rereadingData}/>}
-                {Object.keys(calculatedData).length >0 && <CalcResultsDialog open={true} onClose={()=>setCalculatedData([])} />}
+                {Object.keys(calculatedData).length >0 && <CalcResultsDialog open={true} onClose={()=>setCalculatedData({})} integrand={schemeData!==null ? Object.keys(schemeData):[]} calculatedData={calculatedData} />}
               </div>
             </ReactFlowProvider>
           </Grid>

@@ -10,64 +10,46 @@ import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody
 type Props = {
   open: boolean,
   onClose: () => void,
+  integrand:string[],
+  calculatedData:{ [key: number]: number[]}
 }
 
 export const CalcResultsDialog=(props:Props)=>{
-
-  function createData(
-    name: string,
-    calories: number,
-    fat: number,
-    carbs: number,
-    protein: number,
-  ) {
-    return { name, calories, fat, carbs, protein };
-  }
-
-  const rows = [
-    createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-    createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-    createData('Eclair', 262, 16.0, 24, 6.0),
-    createData('Cupcake', 305, 3.7, 67, 4.3),
-    createData('Gingerbread', 356, 16.0, 49, 3.9),
-  ];
+  const [time, setTime] = useState(Object.keys(props.calculatedData));
+  const [data, setData] = useState(Object.values(props.calculatedData));
 
   return (
     <Dialog  open={props.open}>
       <Typography sx={{p:1}}>Results</Typography>
       <DialogContent>
         <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
+          <Table sx={{ minWidth: 500 }} size="small" aria-label="a dense table">
             <TableHead>
               <TableRow>
-                <TableCell>Dessert (100g serving)</TableCell>
-                <TableCell align="right">Calories</TableCell>
-                <TableCell align="right">Fat&nbsp;(g)</TableCell>
-                <TableCell align="right">Carbs&nbsp;(g)</TableCell>
-                <TableCell align="right">Protein&nbsp;(g)</TableCell>
+                <TableCell>Time</TableCell>
+                {props.integrand.map((i)=><TableCell align="right">{i}</TableCell>)}
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map((row) => (
+              {time.map((t,i)=>
                 <TableRow
-                  key={row.name}
+                  key={t}
                   sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                 >
-                  <TableCell component="th" scope="row">
-                    {row.name}
+                  <TableCell key={t} component="th" scope="row">
+                    {t}
                   </TableCell>
-                  <TableCell align="right">{row.calories}</TableCell>
-                  <TableCell align="right">{row.fat}</TableCell>
-                  <TableCell align="right">{row.carbs}</TableCell>
-                  <TableCell align="right">{row.protein}</TableCell>
+                  {data[i].map((d,j)=>
+                    <TableCell key={i+j} align="right">{d.toFixed(3)}</TableCell>
+                  )}
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </TableContainer>
       </DialogContent>
       <DialogActions>
-        <Button variant='contained' size="small" onClick={()=>props.onClose()}>Cancel</Button>
+        <Button variant='contained' size="small" onClick={()=>props.onClose()}>OK</Button>
       </DialogActions>
     </Dialog>
   );
