@@ -101,10 +101,11 @@ export const NodeDialog=(props:Props)=>{
                         value={tmpNode.data[k]}
                         onChange={(e)=>handleOnChange(e,k)}
                         InputLabelProps={{shrink:true}}
+                        disabled={tmpNode.data[k]==="-"}
                       />
                     </div>
             }else if(
-              (typeof(tmpNode.data[k])==='number' && tmpNode.type==="reaction" && k==="reactionRateConstant") ||
+              (typeof(tmpNode.data[k])==='number' && tmpNode.type==="reaction" && k==="kineticConstant") ||
               (typeof(tmpNode.data[k])==='number' && tmpNode.type==="reactant" && k==="initialConcentration") ||
               (typeof(tmpNode.data[k])==='number' && tmpNode.type==="intermediate" && k==="initialConcentration") ||
               (typeof(tmpNode.data[k])==='number' && tmpNode.type==="product" && k==="initialConcentration")
@@ -116,6 +117,7 @@ export const NodeDialog=(props:Props)=>{
                         value={tmpNode.data[k]}
                         onValueChange={(values)=>handleOnValueChange(values,k)}
                         InputLabelProps={{ shrink: true }}
+                        disabled={tmpNode.data[k]==="-"}
                       />
                     </div>
             }else if(typeof(tmpNode.data[k])==='boolean'){

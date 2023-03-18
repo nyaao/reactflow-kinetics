@@ -111,7 +111,7 @@ export const getNewNode=(
         {data:Object.assign({},
           tmpnodeparams.data,
           {label:labelkey===undefined ? tmpnodeparams.id : tmpnodeparams.data[labelkey]},
-          {symbol:"symbol_"+tmpnodeparams.id}
+          // {symbol:"symbol_"+tmpnodeparams.id}
           )
         }
         )
@@ -185,3 +185,13 @@ export const getIntegrandNo=(nodes:Node[],node:Node)=>{
   return integrandValiableList.filter(n=>n.id===node.id)[0].IntegrandVariableNo;
 }
 
+export const convertFromNumberToColumnName = (num: number): string | null => {
+  let temp,
+    letter = '';
+  while (num > 0) {
+    temp = (num - 1) % 26;
+    letter = String.fromCharCode(temp + 65) + letter;
+    num = (num - temp - 1) / 26;
+  }
+  return letter;
+};

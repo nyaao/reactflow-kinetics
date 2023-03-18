@@ -5,6 +5,14 @@ import { ProductNode } from "./CustomNodes/ProductNode";
 import { InterMediateNode } from "./CustomNodes/InterMediateNode";
 import { BackGroundNode } from "./CustomNodes/BackGroundNode";
 
+// other
+export const setId=(newid:number)=>{
+  id=newid
+}
+let id = 1;
+const getId = () => `${id++}`;
+
+
 // Node
 export const NodeTypes = {
   // カスタムノードがあればここに記載する
@@ -19,9 +27,9 @@ export interface nodeDataTypes{
 }
 const nodeDataDefault:nodeDataTypes ={
   //用途に応じてデフォルト値を決定
-  "symbol":"symbol_1",
-  "initialConcentration":0.1,
-  "reactionRateConstant":0.05,
+  "symbol":"",
+  "initialConcentration":0.0,
+  "kineticConstant":0.0,
 }
 
 export const createBackgroundNodeParams=(src:string|undefined)=>{
@@ -43,7 +51,9 @@ export const createDefaultNodeParams=(type:string,position:any)=>{
     id: id,
     type: type,
     position: position,
-    data: Object.assign({},{label:id},{src:""},nodeDataDefault),
+    data: type==='reaction' 
+      ? Object.assign({},{label:id},{src:""},nodeDataDefault,{kineticConstant:0.05},{initialConcentration:"-"})
+      : Object.assign({},{label:id},{src:""},nodeDataDefault,{kineticConstant:"-"},{initialConcentration:0.1}),
     zIndex:100,
   }
 };
@@ -76,9 +86,3 @@ export const createDefaultEdgeParams=(source:string|null,sourcehandle:string,tar
   }
 };
 
-// other
-export const setId=(newid:number)=>{
-  id=newid
-}
-let id = 1;
-const getId = () => `${id++}`;
