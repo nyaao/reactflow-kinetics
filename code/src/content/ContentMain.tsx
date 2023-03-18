@@ -178,7 +178,7 @@ export default function ContentMain(){
                                                   .map(rip=>({["Y["+getIntegrandNo(nodes,rip)+"]"]:rip.data.initialConcentration})))
 
           const params:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type==='reaction')
-                                                   .map(rn=>({["k["+getKineticConstantNo(nodes,rn)+"]"]:rn.data.reactionRateConstant})))
+                                                   .map(rn=>({["k["+getKineticConstantNo(nodes,rn)+"]"]:rn.data.kineticConstant})))
           const res = await calc2(schemeData,initY,params);
           console.log(res.data)
           setCalculatedData(res.data);
