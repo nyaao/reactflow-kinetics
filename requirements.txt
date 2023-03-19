@@ -1,5 +1,5 @@
 # Django3.1
-Django==3.1
+Django
 psycopg2
 
 # REST APIに必要なもの。
