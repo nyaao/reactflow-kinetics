@@ -6,6 +6,7 @@ import DialogActions from '@mui/material/DialogActions';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import { TableContainer, Paper, Table, TableHead, TableRow, TableCell, TableBody } from '@mui/material';
+import { GraphCanvas } from './GraphCanvas';
 
 type Props = {
   open: boolean,
@@ -47,6 +48,15 @@ export const CalcResultsDialog=(props:Props)=>{
             </TableBody>
           </Table>
         </TableContainer>
+        <GraphCanvas
+          time={time}
+          data={data}
+          calc_T={[0,50,100]}
+          calc_A={[1,0.5,0]}
+          calc_B={[0,0.5,1]}
+          xmin={0}
+          xmax={100}
+        />
       </DialogContent>
       <DialogActions>
         <Button variant='contained' size="small" onClick={()=>props.onClose()}>OK</Button>

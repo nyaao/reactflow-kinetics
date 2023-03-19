@@ -18,12 +18,12 @@ import { MyAppBar } from './MyAppBar';
 import { NodeDialog } from './Dialogs/NodeDialog';
 import { EdgeDialog } from './Dialogs/EdgeDialog';
 import { ExportExcel, ImportBackgroundNode, ImportExcel } from './FileHandler/FileHandler';
-import { getNewNode, getNewEdgeParams, getKineticConstantNo, getIntegrandNo } from './utils';
+import { getNewNode, getNewEdgeParams } from './utils';
 import { EdgeTypes, NodeTypes,} from './default';
 import './default.ts'
 import { myTheme } from './myTheme';
 import 'reactflow/dist/style.css';
-import { calc, calc2 } from './submit';
+import { calc, calc2, calctest } from './submit';
 import { SchemeDialog } from './Dialogs/SchemeDialog';
 import { CalcResultsDialog } from './Dialogs/CalcResultsDialog';
 
@@ -146,13 +146,13 @@ export default function ContentMain(){
         const rereading_integrand = Object.assign({},...res.newnodes
           .filter((nn)=>nn.type!=='reaction')
           .map((nn)=>(
-          {["Y["+nn.data.integrand_id+"]"]:"["+nn.data.symbol+"]"}
+          {["Y["+nn.id.replace("m","")+"]"]:"["+nn.data.symbol+"]"}
         )));
 
         const rereading_reaction = Object.assign({},...res.newnodes
           .filter((nn)=>nn.type==='reaction')
           .map((nn)=>(
-          {["k["+nn.data.reaction_id+"]"]:"k_"+nn.data.reaction_id}
+          {["k["+nn.id.replace("r","")+"]"]:"k_"+nn.id.replace("r","")}
         )));        
 
         const rereading=Object.assign({},rereading_integrand,rereading_reaction)
@@ -160,7 +160,7 @@ export default function ContentMain(){
         const scheme = Object.assign({},...res.newnodes
           .filter((nn)=>nn.type!=='reaction')                    
           .map((nn)=>(
-          {["Y["+getIntegrandNo(nodes,nn)+"]"]:nn.data.equation}
+          {["Y["+nn.id.replace("m","")+"]"]:nn.data.equation}
         )));
 
         console.log(scheme);
@@ -175,10 +175,10 @@ export default function ContentMain(){
 
         if(rereadingData!==null && schemeData!==null){
           const initY:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type!=="reaction")
-                                                  .map(rip=>({["Y["+getIntegrandNo(nodes,rip)+"]"]:rip.data.initialConcentration})))
+                                                  .map(rip=>({["Y["+rip.id.replace("m","")+"]"]:rip.data.initialConcentration})))
 
           const params:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type==='reaction')
-                                                   .map(rn=>({["k["+getKineticConstantNo(nodes,rn)+"]"]:rn.data.kineticConstant})))
+                                                   .map(rn=>({["k["+rn.id.replace("r","")+"]"]:rn.data.kineticConstant})))
           const res = await calc2(schemeData,initY,params);
           console.log(res.data)
           setCalculatedData(res.data);

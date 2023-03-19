@@ -1,6 +1,7 @@
 from scipy.integrate import solve_ivp
 import numpy as np
 from . import MyTransfomer
+# import MyTransfomer
 import sys
 import optuna
 import re
@@ -59,36 +60,67 @@ class DiffEqOptTool():
 
 def lambda_handler(event, context):
     #データ格納
-    scheme = event["body"]["scheme"]
+    expressions = event["body"]["scheme"]
     init_y = event["body"]["init_y"]
-    params = event["body"]["params"]
+    org_params = event["body"]["params"]
 
-    print(scheme)
     print(init_y)
-    print(params)
+    print(expressions)
+    print(org_params)
 
-    init_y = sorted({k.replace('Y',''):init_y[k] for k in init_y.keys()}.items()) #init_yをキーでソート
+    """
+    init_y = sorted({k.replace('Y',''):init_y[k] for k in tmpkeys}.items()) #init_yをキーでソート
     init_y = [y[1] for y in init_y] #ソートした結果をリストに格納
+    expressions = sorted({k.replace('Y',''):scheme[k] for k in tmpkeys}.items()) #schemeをキーでソート
+    expressions = [re.sub('^\+','',expression[1]) for expression in expressions]
     params = sorted({k.replace('k',''):params[k] for k in params.keys()}.items()) #paramsをキーでソート
     org_params = [k[1] for k in params] #ソートした結果をリストに格納
-    expressions = [re.sub('^\+','',expression) for expression in scheme.values()]
+    """
 
+    Yindex_max = int(re.search(r'[0-9]+',max(init_y.keys())).group())
+    init_y_input=[]
+    for yi in range(Yindex_max+1):
+        try:
+            init_y_input.append(init_y['Y['+str(yi)+']'])
+        except:
+            init_y_input.append(0)
 
-    time_ = np.linspace(0,100,101)
+    Exprindex_max = int(re.search(r'[0-9]+',max(expressions.keys())).group())
+    expressions_input=[]
+    for ei in range(Exprindex_max+1):
+        try:
+            expressions_input.append(re.sub('^\+','',expressions['Y['+str(ei)+']']))
+        except:
+            expressions_input.append("1-1")
+
+    OrgParamindex_max = int(re.search(r'[0-9]+',max(org_params.keys())).group())
+    org_params_input=[]
+    for ki in range(OrgParamindex_max+1):
+        try:
+            org_params_input.append(org_params['k['+str(ki)+']'])
+        except:
+            org_params_input.append(0)
+
+    print("-----------------------------------------")
+
+    print(init_y_input)
+    print(expressions_input)    
+    print(org_params_input)
+    
     # init_y = [100,100,0]
     # org_params = [0.1]
-
     # print(rereading)
     # expressions = [re.sub('^\+','',expression) for expression in scheme.values()]
     # print(expressions)
-    
+
+    time_ = np.linspace(0,100,101)
     def funcEq(T, Y, PARAMS):
         parser = MyTransfomer.EquationParser(PARAMS,Y) # parseする前に各ステップにおけるYを格納する必要があるため、ここでパーサーをインスタンス化する必要がある
-        ret = [parser.parse(expr) for expr in expressions]
+        ret = [parser.parse(expr) for expr in expressions_input]
         return ret
     
-    solver = DiffEqOptTool(funcEq,len(org_params),time_,init_y)
-    return solver.solveDiffEq(org_params)
+    solver = DiffEqOptTool(funcEq,len(org_params_input),time_,init_y_input)
+    return solver.solveDiffEq(org_params_input)
 
 
 if __name__=='__main__':
@@ -102,6 +134,9 @@ if __name__=='__main__':
                     "k[0] * Y[0] * Y[1] - k[1] * Y[2] * Y[3]",
                     "k[1] * Y[2] * Y[3]"]
 
+    # init_y=[0, 0.1, 0, 0, 0.1]
+    # expressions = ['1-1', '-k[1]*Y[1]*Y[4]', 'k[1]*Y[1]*Y[4]', 'k[1]*Y[1]*Y[4]', '-k[1]*Y[1]*Y[4]']
+    # org_params = [0, 0.05]
 
     def funcEq(T, Y, PARAMS):
         parser = MyTransfomer.EquationParser(PARAMS,Y) # parseする前に各ステップにおけるYを格納する必要があるため、ここでパーサーをインスタンス化する必要がある

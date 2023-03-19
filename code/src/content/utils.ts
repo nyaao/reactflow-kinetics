@@ -169,21 +169,21 @@ export const AntSwitch = styled(Switch)(({ theme }) => ({
 
 // 速度定数（ｋ）の下付きNoを取得
 // NodesをReactionNodeをID昇順でソートした後に、No割当て
-export const getKineticConstantNo=(nodes:Node[],node:Node)=>{
-  const reactionNodes = nodes.filter(n=>n.type==="reaction")
-  const sortedReactionNodes = [...reactionNodes].sort(function(a,b){return Number(a.id)-Number(b.id)})
-  const kineticConstantList = sortedReactionNodes.map((rn,i)=>({"id":rn.id,"kineticConstantNo":i}))
-  return kineticConstantList.filter(n=>n.id===node.id)[0].kineticConstantNo;
-}
+// export const getKineticConstantNo=(nodes:Node[],node:Node)=>{
+//   const reactionNodes = nodes.filter(n=>n.type==="reaction")
+//   const sortedReactionNodes = [...reactionNodes].sort(function(a,b){return Number(a.id)-Number(b.id)})
+//   const kineticConstantList = sortedReactionNodes.map((rn,i)=>({"id":rn.id,"kineticConstantNo":i}))
+//   return kineticConstantList.filter(n=>n.id===node.id)[0].kineticConstantNo;
+// }
 
 // 被積分変数（Y)の下付きNoを取得
 // ReactionNode以外のNodeをID昇順でソートした後に、No割当て
-export const getIntegrandNo=(nodes:Node[],node:Node)=>{
-  const integrandNodes = nodes.filter(n=>n.type!=="reaction")
-  const sortedIntegrandNodes = [...integrandNodes].sort(function(a,b){return Number(a.id)-Number(b.id)})
-  const integrandValiableList = sortedIntegrandNodes.map((rn,i)=>({"id":rn.id,"IntegrandVariableNo":i}))
-  return integrandValiableList.filter(n=>n.id===node.id)[0].IntegrandVariableNo;
-}
+// export const getIntegrandNo=(nodes:Node[],node:Node)=>{
+//   const integrandNodes = nodes.filter(n=>n.type!=="reaction")
+//   const sortedIntegrandNodes = [...integrandNodes].sort(function(a,b){return Number(a.id)-Number(b.id)})
+//   const integrandValiableList = sortedIntegrandNodes.map((rn,i)=>({"id":rn.id,"IntegrandVariableNo":i}))
+//   return integrandValiableList.filter(n=>n.id===node.id)[0].IntegrandVariableNo;
+// }
 
 export const convertFromNumberToColumnName = (num: number): string | null => {
   let temp,

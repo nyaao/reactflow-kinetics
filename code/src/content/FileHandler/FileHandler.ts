@@ -2,7 +2,7 @@ import { ChangeEvent } from "react";
 import ExcelJS, { CellValue } from 'exceljs';
 import { Node,Edge } from "reactflow";
 import React from "react";
-import { createBackgroundNodeParams, setId } from "../default";
+import { createBackgroundNodeParams, setRId,setMId } from "../default";
 import { getMaxFromArray } from "../utils";
 
 export const ExportExcel=async(e:{ preventDefault: () => void; },NODES:Node[],EDGES:Edge[])=>{
@@ -173,8 +173,10 @@ export const ImportExcel=(
       const data = new Uint8Array(result);
       // console.log(data);// dataをカスタムフックで管理できないか useData(blobURL)->return data
       LoadExcelData(data).then((res)=>{
-        const nodeIdArray = res["newnodes"].map((node)=>Number(node.id))
-        setId(getMaxFromArray(nodeIdArray)+1);
+        const nodeRIdArray = res["newnodes"].filter(n=>n.type==='reaction').map((node)=>Number(node.id))
+        setRId(getMaxFromArray(nodeRIdArray)+1);
+        const nodeMIdArray = res["newnodes"].filter(n=>n.type!=='reaction').map((node)=>Number(node.id))
+        setMId(getMaxFromArray(nodeMIdArray)+1);
         SETNODES(res["newnodes"]);
         SETEDGES(res["newedges"]);
         });

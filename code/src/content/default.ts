@@ -6,12 +6,23 @@ import { InterMediateNode } from "./CustomNodes/InterMediateNode";
 import { BackGroundNode } from "./CustomNodes/BackGroundNode";
 
 // other
-export const setId=(newid:number)=>{
-  id=newid
-}
-let id = 1;
-const getId = () => `${id++}`;
+// export const setId=(newid:number)=>{
+//   id=newid
+// }
+// let id = 1;
+// const getId = () => `${id++}`;
 
+let rid=1
+const getRId = () => `${rid++}`;
+export const setRId=(newid:number)=>{
+  rid=newid
+}
+
+let mid=1
+const getMId = () => `${mid++}`;
+export const setMId=(newid:number)=>{
+  mid=newid
+}
 
 // Node
 export const NodeTypes = {
@@ -46,7 +57,7 @@ export const createBackgroundNodeParams=(src:string|undefined)=>{
 
 
 export const createDefaultNodeParams=(type:string,position:any)=>{
-  const id = getId();
+  const id = type === 'reaction' ? "r"+String(getRId()) : "m"+String(getMId());
   return {
     id: id,
     type: type,

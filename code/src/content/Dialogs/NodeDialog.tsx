@@ -6,7 +6,8 @@ import { NumberFormatValues, NumericFormat } from 'react-number-format';
 import {Button,Typography,TextField, Stack} from '@mui/material';
 import { Node } from 'reactflow';
 import { useState } from 'react';
-import { AntSwitch, getIntegrandNo, getKineticConstantNo } from '../utils';
+import { AntSwitch } from '../utils';
+import { TempleHinduRounded } from '@mui/icons-material';
 
 type Props = {
   open: boolean,
@@ -112,7 +113,7 @@ export const NodeDialog=(props:Props)=>{
               ){
               return <div key={k}>
                       <NumericFormat
-                        label={tmpNode.type==="reaction" ? "k[" + getKineticConstantNo(props.nodes,tmpNode)+"]" : "y["+getIntegrandNo(props.nodes,tmpNode)+"]"}
+                        label={tmpNode.type==="reaction" ? "k[" + tmpNode.id.replace("r","")+"]" : "y["+tmpNode.id.replace("m","")+"]"}
                         customInput={TextField}
                         value={tmpNode.data[k]}
                         onValueChange={(values)=>handleOnValueChange(values,k)}
