@@ -6,3 +6,4 @@ django/API/App/migrations
 /code/node_modules/
 django/API/API/local_settings.py
 django/API/App/parser/__pycache__
+lambdaURL.txt

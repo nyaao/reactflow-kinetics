@@ -23,7 +23,7 @@ import { EdgeTypes, NodeTypes,} from './default';
 import './default.ts'
 import { myTheme } from './myTheme';
 import 'reactflow/dist/style.css';
-import { calc, calc2, calctest } from './submit';
+import { calc, calc2 } from './submit';
 import { SchemeDialog } from './Dialogs/SchemeDialog';
 import { CalcResultsDialog } from './Dialogs/CalcResultsDialog';
 
@@ -180,8 +180,7 @@ export default function ContentMain(){
           const params:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type==='reaction')
                                                    .map(rn=>({["k["+rn.id.replace("r","")+"]"]:rn.data.kineticConstant})))
           const res = await calc2(schemeData,initY,params);
-          console.log(res.data)
-          setCalculatedData(res.data);
+          setCalculatedData(JSON.parse(res.data));
         }
         }}>calc2</Button>
             

@@ -1,6 +1,6 @@
 from scipy.integrate import solve_ivp
 import numpy as np
-from . import MyTransfomer
+from . import MyTransformer
 # import MyTransfomer
 import sys
 import optuna
@@ -115,7 +115,7 @@ def lambda_handler(event, context):
 
     time_ = np.linspace(0,100,101)
     def funcEq(T, Y, PARAMS):
-        parser = MyTransfomer.EquationParser(PARAMS,Y) # parseする前に各ステップにおけるYを格納する必要があるため、ここでパーサーをインスタンス化する必要がある
+        parser = MyTransformer.EquationParser(PARAMS,Y) # parseする前に各ステップにおけるYを格納する必要があるため、ここでパーサーをインスタンス化する必要がある
         ret = [parser.parse(expr) for expr in expressions_input]
         return ret
     
@@ -139,7 +139,7 @@ if __name__=='__main__':
     # org_params = [0, 0.05]
 
     def funcEq(T, Y, PARAMS):
-        parser = MyTransfomer.EquationParser(PARAMS,Y) # parseする前に各ステップにおけるYを格納する必要があるため、ここでパーサーをインスタンス化する必要がある
+        parser = MyTransformer.EquationParser(PARAMS,Y) # parseする前に各ステップにおけるYを格納する必要があるため、ここでパーサーをインスタンス化する必要がある
         ret = [parser.parse(expr) for expr in expressions]
         return ret
 

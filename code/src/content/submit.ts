@@ -3,7 +3,7 @@ import { createDefaultNodeParams } from './default';
 import { Node, Edge } from 'reactflow';
 
 export const calc=async(nodes:Node[],edges:Edge[])=>{
-    // const res = await axios.post('https://*****.****.****/',{body:{nodes:nodes,edges:edges}})
+    // const res = await axios.post('',{body:{nodes:nodes,edges:edges}}) //lambda
     const res = await axios.post('http://127.0.0.1:8001/apitest/',{body:{nodes:nodes,edges:edges}})
     const retnodes:Node[] = JSON.parse(res.data.nodes);
     const newnodes = nodes.map((n,i)=>(Object.assign({},
@@ -18,7 +18,7 @@ export const calc=async(nodes:Node[],edges:Edge[])=>{
   }
 
   export const calc2=async(SCHEMEDATA:{[key:string]:string},INITY:{[key:string]:number},PARAMS:{[key:string]:number})=>{
-    // const res = await axios.post('https://*****.****.****/',{body:{nodes:nodes,edges:edges}})
+    // const res = await axios.post('',{body:{scheme:SCHEMEDATA,init_y:INITY,params:PARAMS}}) //lambda
     const res = await axios.post('http://127.0.0.1:8001/parseDifferentialEq/',{body:{scheme:SCHEMEDATA,init_y:INITY,params:PARAMS}})
     // const retnodes:Node[] = JSON.parse(res.data.nodes);
     // const newnodes = nodes.map((n,i)=>(Object.assign({},
@@ -28,7 +28,3 @@ export const calc=async(nodes:Node[],edges:Edge[])=>{
     return res
     
   }  
-  export const calctest=async()=>{
-    const res = await axios.get('http://127.0.0.1:8000/parseDifferentialEq/')
-    console.log(res)
-  }
