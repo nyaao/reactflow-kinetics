@@ -17,10 +17,17 @@ type Props = {
 
 export const CalcResultsDialog=(props:Props)=>{
   const [time, setTime] = useState(Object.keys(props.calculatedData));
-  const [data, setData] = useState(Object.values(props.calculatedData));
+  const [rowdata, setRowData] = useState(Object.values(props.calculatedData));
+
+  const mids = props.integrand.map(integ=>Number(integ.replace('Y[',"").replace("]","")))
+  const data = rowdata.map((d)=>d.filter((_,i)=>mids.includes(i)))
+
 
   return (
     <Dialog  open={props.open}>
+      <Button onClick={()=>console.log(
+        
+        )}>test</Button>
       <Typography sx={{p:1}}>Results</Typography>
       <DialogContent>
         <TableContainer component={Paper}>
@@ -28,7 +35,8 @@ export const CalcResultsDialog=(props:Props)=>{
             <TableHead>
               <TableRow>
                 <TableCell>Time</TableCell>
-                {props.integrand.map((i)=><TableCell key={i} align="right">{i}</TableCell>)}
+                {/* {[...props.integrand].sort().map((i)=><TableCell key={i} align="right">{i}</TableCell>)} */}
+                {[...mids].sort((a,b)=>a-b).map((i)=><TableCell key={i} align="right">{i}</TableCell>)}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -51,9 +59,7 @@ export const CalcResultsDialog=(props:Props)=>{
         <GraphCanvas
           time={time}
           data={data}
-          calc_T={[0,50,100]}
-          calc_A={[1,0.5,0]}
-          calc_B={[0,0.5,1]}
+          label={[...mids].sort((a,b)=>a-b).map(mi=>"Y["+mi+"]")}
           xmin={0}
           xmax={100}
         />

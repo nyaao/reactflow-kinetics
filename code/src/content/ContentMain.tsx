@@ -175,12 +175,13 @@ export default function ContentMain(){
 
         if(rereadingData!==null && schemeData!==null){
           const initY:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type!=="reaction")
-                                                  .map(rip=>({["Y["+rip.id.replace("m","")+"]"]:rip.data.initialConcentration})))
+                                                  .map(rip=>({["Y["+rip.id.replace("m","")+"]"]:rip.data.initial_concentration})))
 
           const params:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type==='reaction')
-                                                   .map(rn=>({["k["+rn.id.replace("r","")+"]"]:rn.data.kineticConstant})))
+                                                   .map(rn=>({["k["+rn.id.replace("r","")+"]"]:rn.data.kinetic_constant})))
           const res = await calc2(schemeData,initY,params);
-          setCalculatedData(JSON.parse(res.data));
+          const data = typeof(res.data)==='object' ? res.data : JSON.parse(res.data) //lambdaの場合は文字列で返してくる
+          setCalculatedData(data);
         }
         }}>calc2</Button>
             

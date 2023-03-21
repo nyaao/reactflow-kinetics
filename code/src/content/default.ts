@@ -39,8 +39,8 @@ export interface nodeDataTypes{
 const nodeDataDefault:nodeDataTypes ={
   //用途に応じてデフォルト値を決定
   "symbol":"",
-  "initialConcentration":0.0,
-  "kineticConstant":0.0,
+  "initial_concentration":0.0,
+  "kinetic_constant":0.0,
 }
 
 export const createBackgroundNodeParams=(src:string|undefined)=>{
@@ -63,10 +63,10 @@ export const createDefaultNodeParams=(type:string,position:any)=>{
     type: type,
     position: position,
     data: type==='reaction' 
-      ? Object.assign({},{label:id},{src:""},nodeDataDefault,{kineticConstant:0.05},{initialConcentration:"-"})
+      ? Object.assign({},{label:id},{src:""},nodeDataDefault,{kinetic_constant:0.05},{initial_concentration:"-"})
       : (type==='reactant' 
-        ? Object.assign({},{label:id},{src:""},nodeDataDefault,{kineticConstant:"-"},{initialConcentration:0.1})
-        : Object.assign({},{label:id},{src:""},nodeDataDefault,{kineticConstant:"-"},{initialConcentration:0.0})
+        ? Object.assign({},{label:id},{src:""},nodeDataDefault,{kinetic_constant:"-"},{initial_concentration:0.1})
+        : Object.assign({},{label:id},{src:""},nodeDataDefault,{kinetic_constant:"-"},{initial_concentration:0.0})
       ),
     zIndex:100,
   }

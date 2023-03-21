@@ -106,10 +106,10 @@ export const NodeDialog=(props:Props)=>{
                       />
                     </div>
             }else if(
-              (typeof(tmpNode.data[k])==='number' && tmpNode.type==="reaction" && k==="kineticConstant") ||
-              (typeof(tmpNode.data[k])==='number' && tmpNode.type==="reactant" && k==="initialConcentration") ||
-              (typeof(tmpNode.data[k])==='number' && tmpNode.type==="intermediate" && k==="initialConcentration") ||
-              (typeof(tmpNode.data[k])==='number' && tmpNode.type==="product" && k==="initialConcentration")
+              (typeof(tmpNode.data[k])==='number' && tmpNode.type==="reaction" && k==="kinetic_constant") ||
+              (typeof(tmpNode.data[k])==='number' && tmpNode.type==="reactant" && k==="initial_concentration") ||
+              (typeof(tmpNode.data[k])==='number' && tmpNode.type==="intermediate" && k==="initial_concentration") ||
+              (typeof(tmpNode.data[k])==='number' && tmpNode.type==="product" && k==="initial_concentration")
               ){
               return <div key={k}>
                       <NumericFormat

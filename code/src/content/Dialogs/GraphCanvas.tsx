@@ -35,9 +35,7 @@ ChartJS.register(
 type Props = { 
   time:string[],
   data:number[][],
-  calc_T:number[],
-  calc_A:number[],
-  calc_B:number[],
+  label:string[],
   xmin:number,
   xmax:number,
 }
@@ -65,16 +63,6 @@ export const GraphCanvas=(props:Props)=>{
       {x:Number(time),y:props.data[j][i]}
       ))      
   )
-
-
-  const data_calc_A = props.time.map((time,i)=>(
-    {x:Number(time),y:props.data[i][0]}
-    ))
-
-  const data_calc_B = props.time.map((time,i)=>(
-    {x:Number(time),y:props.data[i][1]}
-    ))
-
   
 
   const graphData = {
@@ -95,7 +83,7 @@ export const GraphCanvas=(props:Props)=>{
     //   },
     // ],
     datasets:data_calc.map((data,i)=>({
-      label:String(i%8),
+      label:props.label[i],
       data:data,
       borderColor: colors[i%8],
       radius:0,
@@ -148,9 +136,6 @@ export const GraphCanvas=(props:Props)=>{
 
   return (
     <>
-      <Button onClick={()=>console.log(
-        data_calc
-        )}>test</Button>
       <div>
         <Line
           height={200}

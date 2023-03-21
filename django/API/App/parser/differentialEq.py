@@ -76,16 +76,17 @@ def lambda_handler(event, context):
     params = sorted({k.replace('k',''):params[k] for k in params.keys()}.items()) #paramsをキーでソート
     org_params = [k[1] for k in params] #ソートした結果をリストに格納
     """
-
-    Yindex_max = int(re.search(r'[0-9]+',max(init_y.keys())).group())
+    
+    Yindex_max = max([int(yi.replace("Y[","").replace("]","")) for yi in init_y.keys()])
     init_y_input=[]
+    
     for yi in range(Yindex_max+1):
         try:
             init_y_input.append(init_y['Y['+str(yi)+']'])
         except:
             init_y_input.append(0)
 
-    Exprindex_max = int(re.search(r'[0-9]+',max(expressions.keys())).group())
+    Exprindex_max = max([int(expri.replace("Y[","").replace("]","")) for expri in expressions.keys()])
     expressions_input=[]
     for ei in range(Exprindex_max+1):
         try:
@@ -93,7 +94,7 @@ def lambda_handler(event, context):
         except:
             expressions_input.append("1-1")
 
-    OrgParamindex_max = int(re.search(r'[0-9]+',max(org_params.keys())).group())
+    OrgParamindex_max = max([int(ki.replace("k[","").replace("]","")) for ki in org_params.keys()])
     org_params_input=[]
     for ki in range(OrgParamindex_max+1):
         try:
