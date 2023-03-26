@@ -1,0 +1,4 @@
+1.Node Displayの不具合解消
+  symbol表示の時にsymbolを変更すると表示が変になる
+
+2.ファイルimport後の編集。id取得がうまくいっていない。
