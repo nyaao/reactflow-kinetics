@@ -1,12 +1,20 @@
-import { AppBar, Box, IconButton, Menu, MenuItem, Toolbar } from "@mui/material";
+import { AppBar, Box, IconButton, Menu, MenuItem, Toolbar, Divider } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu'
+import AutoGraphIcon from '@mui/icons-material/AutoGraph';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
+import FunctionsIcon from '@mui/icons-material/Functions';
+import FormatListBulletedIcon from '@mui/icons-material/FormatListBulleted';
 import { ChangeEvent, useRef, useState } from 'react';
 import { myTheme } from "./myTheme";
+
 
 type Props={
   handleImport:(e: ChangeEvent<HTMLInputElement>)=>void,
   handleExport:(e:{ preventDefault: () => void; })=>void,
   handleImportBG:(e: ChangeEvent<HTMLInputElement>)=>void,
+  setView:(view:"reactflow"|"scheme"|"graph"|"table")=>void,
+  handleShowDerivative:()=>void,
+  handleSolveDerivative:()=>void,
 }
 
 
@@ -84,10 +92,50 @@ export const MyAppBar=(props:Props)=>{
                 }}
               />
             </MenuItem>            
-            
-            
-            
           </Menu>
+          
+          <Divider orientation="vertical" flexItem />
+          
+          <IconButton
+            edge="start"
+            color="primary"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+            onClick={()=>props.setView("reactflow")}
+          >
+            <AccountTreeIcon/>
+          </IconButton>
+
+          <IconButton
+            edge="start"
+            color="primary"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+            onClick={()=>props.handleShowDerivative()}
+          >
+            <FunctionsIcon/>
+          </IconButton>
+
+          <IconButton
+            edge="start"
+            color="primary"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+            onClick={()=>props.handleSolveDerivative()}
+          >
+            <AutoGraphIcon />
+          </IconButton>
+
+          <IconButton
+            edge="start"
+            color="primary"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+            onClick={()=>props.setView("table")}
+          >
+            <FormatListBulletedIcon/>
+          </IconButton>
+
         </Toolbar>
       </AppBar>
     </Box>
