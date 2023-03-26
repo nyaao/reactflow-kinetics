@@ -81,8 +81,8 @@ export interface edgeDataTypes{
 }
 export const edgeDataDefault:edgeDataTypes ={
   //用途に応じてデフォルト値を決定
-  "property1":987,
-  "property2":"abc"
+  // "property1":987,
+  // "property2":"abc"
 }
 export const createDefaultEdgeParams=(source:string|null,sourcehandle:string,target:string|null,targethandle:string)=>{
   return {
@@ -94,7 +94,8 @@ export const createDefaultEdgeParams=(source:string|null,sourcehandle:string,tar
     type: '',
     sourceHandle:sourcehandle,
     targetHandle:targethandle,
-    label:'e'+source+sourcehandle+'-'+target+targethandle,
+    // label:'e'+source+sourcehandle+'-'+target+targethandle,
+    label:'',
     zIndex:100,
     data:Object.assign({},edgeDataDefault)
   }

@@ -24,9 +24,9 @@ export const TableResult=(props:Props)=>{
         {x:Number(time),y:data_selected[j][i]}
     ))
   );
-  const label=[...mids].sort((a,b)=>a-b).map(mi=>"Y["+mi+"]");
+  const labels=[...mids].sort((a,b)=>a-b).map(mi=>"Y["+mi+"]");
   const symbols=[...mids].sort((a,b)=>a-b).map(mi=>props.nodes.filter(n=>n.id==="m"+mi)[0]).map(n=>n.data.symbol);
-
+  const columnHeader = symbols.map((s,i)=>s!=="" ? s : labels[i]);
 
   return (
     <TableContainer component={Paper}>
@@ -34,7 +34,8 @@ export const TableResult=(props:Props)=>{
         <TableHead>
             <TableRow>
             <TableCell>Time</TableCell>
-            {[...mids].sort((a,b)=>a-b).map((i)=><TableCell key={i} align="right">{"Y["+i+"]"}</TableCell>)}
+            {/* {labels.map((l)=><TableCell key={l} align="right">{l}</TableCell>)} */}
+            {columnHeader.map((ch)=><TableCell key={ch} align="right">{ch}</TableCell>)}
             </TableRow>
         </TableHead>
         <TableBody>

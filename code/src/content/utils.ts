@@ -65,18 +65,18 @@ export const getNewEdgeParams=(EDGES:Edge<any>[],PARAMS: Edge<any> | Connection)
     const sourcehandle = PARAMS.sourceHandle ? PARAMS.sourceHandle : "";
     const targethandle = PARAMS.targetHandle ? PARAMS.targetHandle : "";
 
-    if(EDGES.length>0){
+    // if(EDGES.length>0){
       // 最初に作成するエッジではない場合は、labelにどの値が入っているか検出して、labelに対応する値を格納する必要がある
-      const labelkey =  Object.keys(EDGES[0].data).filter((key)=>(EDGES[0].label===EDGES[0].data[key]))[0];
-      const tmpedgeparams = createDefaultEdgeParams(PARAMS.source,sourcehandle,PARAMS.target,targethandle);
-      const tmp = {label:labelkey===undefined ? tmpedgeparams.id : tmpedgeparams.data[labelkey]};
-      const newedgeparams = Object.assign({},tmpedgeparams,tmp);
-      return newedgeparams;
-    }else{
+      // const labelkey =  Object.keys(EDGES[0].data).filter((key)=>(EDGES[0].label===EDGES[0].data[key]))[0];
+      // const tmpedgeparams = createDefaultEdgeParams(PARAMS.source,sourcehandle,PARAMS.target,targethandle);
+      // const tmp = {label:labelkey===undefined ? tmpedgeparams.id : tmpedgeparams.data[labelkey]};
+      // const newedgeparams = Object.assign({},tmpedgeparams,tmp);
+      // return newedgeparams;
+    // }else{
       // 最初に作成するエッジの場合にdefault.tsで定義されているデフォルト値がlabelに格納される
       const newedgeparams = createDefaultEdgeParams(PARAMS.source,sourcehandle,PARAMS.target,targethandle);
       return newedgeparams;
-    }
+    // }
 }
 
 export const getNewNode=(
