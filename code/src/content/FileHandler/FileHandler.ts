@@ -173,9 +173,9 @@ export const ImportExcel=(
       const data = new Uint8Array(result);
       // console.log(data);// dataをカスタムフックで管理できないか useData(blobURL)->return data
       LoadExcelData(data).then((res)=>{
-        const nodeRIdArray = res["newnodes"].filter(n=>n.type==='reaction').map((node)=>Number(node.id))
+        const nodeRIdArray = res["newnodes"].filter(n=>n.type==='reaction').map((node)=>Number(node.id.replace("r","")));
         setRId(getMaxFromArray(nodeRIdArray)+1);
-        const nodeMIdArray = res["newnodes"].filter(n=>n.type!=='reaction').map((node)=>Number(node.id))
+        const nodeMIdArray = res["newnodes"].filter(n=>n.type!=='reaction').map((node)=>Number(node.id.replace("m","")));
         setMId(getMaxFromArray(nodeMIdArray)+1);
         SETNODES(res["newnodes"]);
         SETEDGES(res["newedges"]);
