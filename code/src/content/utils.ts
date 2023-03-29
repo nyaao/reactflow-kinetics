@@ -185,7 +185,7 @@ export const AntSwitch = styled(Switch)(({ theme }) => ({
 //   return integrandValiableList.filter(n=>n.id===node.id)[0].IntegrandVariableNo;
 // }
 
-export const convertFromNumberToColumnName = (num: number): string | null => {
+export const convertFromNumberToAlpha = (num: number): string | null => {
   let temp,
     letter = '';
   while (num > 0) {

@@ -4,6 +4,7 @@ import { ReactionNode } from "./CustomNodes/ReactionNode";
 import { ProductNode } from "./CustomNodes/ProductNode";
 import { InterMediateNode } from "./CustomNodes/InterMediateNode";
 import { BackGroundNode } from "./CustomNodes/BackGroundNode";
+import { convertFromNumberToAlpha } from "./utils";
 
 // other
 // export const setId=(newid:number)=>{
@@ -63,10 +64,10 @@ export const createDefaultNodeParams=(type:string,position:any)=>{
     type: type,
     position: position,
     data: type==='reaction' 
-      ? Object.assign({},{label:id},{src:""},nodeDataDefault,{kinetic_constant:0.05},{initial_concentration:"-"})
+      ? Object.assign({},{label:id},{src:""},nodeDataDefault,{kinetic_constant:0.05},{initial_concentration:"-"},{symbol:id.replace("r","R")})
       : (type==='reactant' 
-        ? Object.assign({},{label:id},{src:""},nodeDataDefault,{kinetic_constant:"-"},{initial_concentration:0.1})
-        : Object.assign({},{label:id},{src:""},nodeDataDefault,{kinetic_constant:"-"},{initial_concentration:0.0})
+        ? Object.assign({},{label:id},{src:""},nodeDataDefault,{kinetic_constant:"-"},{initial_concentration:0.1},{symbol:convertFromNumberToAlpha(Number(id.replace("m","")))})
+        : Object.assign({},{label:id},{src:""},nodeDataDefault,{kinetic_constant:"-"},{initial_concentration:0.0},{symbol:convertFromNumberToAlpha(Number(id.replace("m","")))})
       ),
     zIndex:100,
   }
