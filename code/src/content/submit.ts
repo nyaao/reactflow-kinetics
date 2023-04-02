@@ -6,6 +6,7 @@ export const calc=async(nodes:Node[],edges:Edge[])=>{
     // const res = await axios.post('',{body:{nodes:nodes,edges:edges}}) //lambda
     const res = await axios.post('http://127.0.0.1:8000/apitest/',{body:{nodes:nodes,edges:edges}})
     const retnodes:Node[] = JSON.parse(res.data.nodes);
+    console.log(retnodes);
     const newnodes = nodes.map((n,i)=>(Object.assign({},
       {id:n.id,
       type:n.type,

@@ -1,9 +1,9 @@
-import { MarkerType } from "reactflow";
-import { ReactantNode } from "./CustomNodes/ReactantNode";
-import { ReactionNode } from "./CustomNodes/ReactionNode";
-import { ProductNode } from "./CustomNodes/ProductNode";
-import { InterMediateNode } from "./CustomNodes/InterMediateNode";
-import { BackGroundNode } from "./CustomNodes/BackGroundNode";
+import { Edge, MarkerType } from "reactflow";
+import { ReactantNode } from "./ReactFlow/CustomNodes/ReactantNode";
+import { ReactionNode } from "./ReactFlow/CustomNodes/ReactionNode";
+import { ProductNode } from "./ReactFlow/CustomNodes/ProductNode";
+import { InterMediateNode } from "./ReactFlow/CustomNodes/InterMediateNode";
+import { BackGroundNode } from "./ReactFlow/CustomNodes/BackGroundNode";
 import { convertFromNumberToAlpha } from "./utils";
 
 // other
@@ -64,10 +64,10 @@ export const createDefaultNodeParams=(type:string,position:any)=>{
     type: type,
     position: position,
     data: type==='reaction' 
-      ? Object.assign({},{label:id},{src:""},nodeDataDefault,{kinetic_constant:0.05},{initial_concentration:"-"},{symbol:id.replace("r","R")})
+      ? Object.assign({},{label:id.replace("r","k")},{src:""},nodeDataDefault,{kinetic_constant:0.05},{initial_concentration:"-"},{symbol:id.replace("r","k")})
       : (type==='reactant' 
-        ? Object.assign({},{label:id},{src:""},nodeDataDefault,{kinetic_constant:"-"},{initial_concentration:0.1},{symbol:convertFromNumberToAlpha(Number(id.replace("m","")))})
-        : Object.assign({},{label:id},{src:""},nodeDataDefault,{kinetic_constant:"-"},{initial_concentration:0.0},{symbol:convertFromNumberToAlpha(Number(id.replace("m","")))})
+        ? Object.assign({},{label:convertFromNumberToAlpha(Number(id.replace("m","")))},{src:""},nodeDataDefault,{kinetic_constant:"-"},{initial_concentration:0.1},{symbol:convertFromNumberToAlpha(Number(id.replace("m","")))})
+        : Object.assign({},{label:convertFromNumberToAlpha(Number(id.replace("m","")))},{src:""},nodeDataDefault,{kinetic_constant:"-"},{initial_concentration:0.0},{symbol:convertFromNumberToAlpha(Number(id.replace("m","")))})
       ),
     zIndex:100,
   }
@@ -85,8 +85,8 @@ export const edgeDataDefault:edgeDataTypes ={
   // "property1":987,
   // "property2":"abc"
 }
-export const createDefaultEdgeParams=(source:string|null,sourcehandle:string,target:string|null,targethandle:string)=>{
-  return {
+export const createDefaultEdgeParams=(source:string,sourcehandle:string,target:string,targethandle:string)=>{
+  const newedge:Edge = {
     id: 'e'+source+sourcehandle+'-'+target+targethandle,
     source: source,
     target: target,
@@ -100,5 +100,7 @@ export const createDefaultEdgeParams=(source:string|null,sourcehandle:string,tar
     zIndex:100,
     data:Object.assign({},edgeDataDefault)
   }
+
+  return newedge
 };
 

@@ -74,7 +74,11 @@ export const getNewEdgeParams=(EDGES:Edge<any>[],PARAMS: Edge<any> | Connection)
       // return newedgeparams;
     // }else{
       // 最初に作成するエッジの場合にdefault.tsで定義されているデフォルト値がlabelに格納される
-      const newedgeparams = createDefaultEdgeParams(PARAMS.source,sourcehandle,PARAMS.target,targethandle);
+      const newedgeparams = createDefaultEdgeParams(
+        PARAMS.source===null?"":PARAMS.source,
+        sourcehandle,
+        PARAMS.target===null?"":PARAMS.target,
+        targethandle);
       return newedgeparams;
     // }
 }

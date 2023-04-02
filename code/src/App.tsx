@@ -2,15 +2,14 @@ import React from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
 import { myTheme } from './content/myTheme';
-import ContentMain from './content/ContentMain';
-
+import { AppMain } from './content/AppMain';
 
 function App() {
   return (
     <div>
       <ThemeProvider theme={myTheme}>
         <CssBaseline/>
-          <ContentMain/>
+          <AppMain/>
       </ThemeProvider>
     </div>
   );

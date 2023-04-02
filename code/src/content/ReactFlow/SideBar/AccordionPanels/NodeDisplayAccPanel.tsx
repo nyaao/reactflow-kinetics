@@ -20,7 +20,7 @@ export function NodeDiaplayAccPanel(props:Props){
         id="panel2bh-header"
       >
         <Typography sx={{ width: '33%', flexShrink: 0, }}>
-          Node Display
+          Display
         </Typography>
         <Typography sx={{ color: 'text.secondary' }}>
         </Typography>
@@ -36,7 +36,13 @@ export function NodeDiaplayAccPanel(props:Props){
               .map((key)=>(
                   <FormControlLabel
                     key={key}
-                    label={key}
+                    label={
+                      {
+                        'symbol':'シンボル',
+                        'initial_concentration':'初期濃度',
+                        'kinetic_constant':' 速度定数',
+                      }[key]
+                    }
                     control={
                       <Checkbox
                         key={key}

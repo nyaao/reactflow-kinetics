@@ -6,7 +6,7 @@ import { NumberFormatValues, NumericFormat } from 'react-number-format';
 import {Button,Typography,TextField, Stack} from '@mui/material';
 import { Node } from 'reactflow';
 import { useState } from 'react';
-import { AntSwitch } from '../utils';
+import { AntSwitch } from '../../utils';
 import { TempleHinduRounded } from '@mui/icons-material';
 
 type Props = {

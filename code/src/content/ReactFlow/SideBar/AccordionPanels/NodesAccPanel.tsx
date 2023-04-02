@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Grid, Paper, styled, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { myTheme } from '../../myTheme';
+import { myTheme } from '../../../myTheme';
 
 const Item = styled(Paper)(({ theme }) => ({
     ...theme.typography.body1,
@@ -44,14 +44,21 @@ export function NodesAccPanel(props:Props){
           {props.nodetypes
           .filter((type:string)=>type!=='background')
           .map((type:string)=>(
-            <Grid key={type} item xs={3}>
+            <Grid key={type} item xs={12}>
               <Item 
                 key={type} 
                 onDragStart={(event) => onDragStart(event, type)} 
                 draggable
                 style={type==="reaction" ? {backgroundColor: myTheme.palette.warning.light} : {backgroundColor: myTheme.palette.success.light}}
               >
-                {type}
+                {
+                  {
+                    'reaction':'反応',
+                    'reactant':'反応剤',
+                    'product':' 生成物',
+                    'intermediate':'中間体',
+                  }[type]
+                }
               </Item>
             </Grid>
           ))}

@@ -4,7 +4,7 @@ import { Node,Edge } from 'reactflow';
 import { NodesAccPanel } from './AccordionPanels/NodesAccPanel';
 import { EdgeDiaplayAccPanel } from './AccordionPanels/EdgeDisplayAccPanel';
 import { NodeDiaplayAccPanel } from './AccordionPanels/NodeDisplayAccPanel';
-import { myTheme } from '../myTheme';
+import { myTheme } from '../../myTheme';
 
 interface Panels{
   [panelNum:string]:boolean
@@ -22,7 +22,7 @@ const panelObj:{[key:string]:string} = {
   // カスタムしたアコーディオンパネルのcaseで判断させる値はここで記載
   'panel1':"nodepanel",
   'panel2':"nodedisplay",
-  'panel3':"edgedisplay",
+  // 'panel3':"edgedisplay",
 }
 
 export default function SideBarMain(props:Props) {
@@ -42,7 +42,7 @@ export default function SideBarMain(props:Props) {
     },[expanded]);
 
   return (
-    <div style={{backgroundColor:myTheme.palette.primary.main,height:"100%"}}>
+    <div style={{backgroundColor:myTheme.palette.grey[200],height:"100%",width:"50%"}}>
       {Object.keys(panelObj).map((k:string)=>{
         switch(panelObj[k]){
           // カスタムしたアコーディオンパネルを使用する場合はここに記載、caseで表示判断させる→22行目参照

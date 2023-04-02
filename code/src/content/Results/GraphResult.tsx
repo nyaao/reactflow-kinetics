@@ -53,36 +53,37 @@ const colors=[
 ]
 
 export const GraphResult=(props:Props)=>{
+  // const time = Object.keys(props.calculatedData);
+  // const rowdata = Object.values(props.calculatedData);
+  // const mids = props.integrand.map(integ=>Number(integ.replace('Y[',"").replace("]","")))
+  // const data_selected = rowdata.map((d)=>d.filter((_,i)=>mids.includes(i)));
 
-
-  // const data_calc_A = [...Array(props.calc_T.length)].map((v,i)=>(
-  //   {x:props.calc_T[i],y:props.calc_A[i]}
-  // ))
-
-
-  const time = Object.keys(props.calculatedData);
-  const rowdata = Object.values(props.calculatedData);
-  const mids = props.integrand.map(integ=>Number(integ.replace('Y[',"").replace("]","")))
-  const data_selected = rowdata.map((d)=>d.filter((_,i)=>mids.includes(i)));
-
-  const plot_data = [...Array(data_selected[0].length)].map((v,i)=>
-    time.map((time,j)=>(
-        {x:Number(time),y:data_selected[j][i]}
-    ))
-  );
-  const label=[...mids].sort((a,b)=>a-b).map(mi=>"Y["+mi+"]");
-  const symbols=[...mids].sort((a,b)=>a-b).map(mi=>props.nodes.filter(n=>n.id==="m"+mi)[0]).map(n=>n.data.symbol);
+  // const plot_data = [...Array(data_selected[0].length)].map((v,i)=>
+  //   time.map((time,j)=>(
+  //       {x:Number(time),y:data_selected[j][i]}
+  //   ))
+  // );
+  // const label=[...mids].sort((a,b)=>a-b).map(mi=>"Y["+mi+"]");
+  // const symbols=[...mids].sort((a,b)=>a-b).map(mi=>props.nodes.filter(n=>n.id==="m"+mi)[0]).map(n=>n.data.symbol);
   
+  // const graphData = {
+  //   datasets:plot_data.map((data,i)=>({
+  //     label:symbols[i] === '' ? label[i] : symbols[i],
+  //     data:data,
+  //     borderColor: colors[i%8],
+  //     radius:0,
+  //     showLine:true
+  //   }))
+  // };
 
+  
   const graphData = {
-
-    datasets:plot_data.map((data,i)=>({
-      label:symbols[i] === '' ? label[i] : symbols[i],
-      data:data,
-      borderColor: colors[i%8],
-      radius:0,
-      showLine:true
-    }))
+      datasets: [
+      {
+        label: "",
+        data: [0.0],
+      },
+    ],
   };
 
 

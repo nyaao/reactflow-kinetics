@@ -1,7 +1,7 @@
 import { Handle, Position,NodeProps } from 'reactflow';
 import * as React from 'react';
 import { styled, Paper } from '@mui/material'
-import { myTheme } from '../myTheme';
+import { myTheme } from '../../myTheme';
 
 const Item = styled(Paper)(({theme})=>({
   width:myTheme.spacing(8),
@@ -12,7 +12,7 @@ const Item = styled(Paper)(({theme})=>({
 }))
 
 
-export function ProductNode({
+export function InterMediateNode({
   selected,
   data,
 }:NodeProps) {
@@ -20,6 +20,7 @@ export function ProductNode({
   return (
     <Item>
       {data.label}
+      <Handle type="source" position={Position.Right}/>
       <Handle type="target" position={Position.Left}/>
     </Item>
   );

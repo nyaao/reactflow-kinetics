@@ -32,6 +32,8 @@ services:
     ports:
       - "3000:3000"     
     tty : true
+    # environment:
+      # - WATCHPACK_POLLING=true
 
 volumes:
   node_modules_volume:

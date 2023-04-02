@@ -27,6 +27,29 @@ export const myTheme=createTheme({
     }
   },
   components:{
+    MuiPaper:{
+      styleOverrides:{
+        rounded:{borderRadius:20}
+      }
+    },
+    MuiCssBaseline: {
+      styleOverrides: `
+      ::-webkit-scrollbar{
+          width: 10px;
+      },
+      ::-webkit-scrollbar-thumb {
+          background-color: #BCBABE;
+          border-radius: 10px;
+      },
+      ::-webkit-scrollbar-track {
+        margin-top: 10px;
+        margin-bottom: 10px;
+        background-color: #EEEEEE;
+        border-radius: 10px;
+     
+      }
+      `
+    },
     MuiButton:{
       defaultProps:{
         variant:"contained",

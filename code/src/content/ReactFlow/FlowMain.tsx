@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, ChangeEvent } from 'react';
+import React, { useState, useRef, useCallback, ChangeEvent, useEffect } from 'react';
 import ReactFlow, {
   ReactFlowProvider,
   addEdge,
@@ -10,41 +10,42 @@ import ReactFlow, {
   Node,
   Background,
   updateEdge,
+  Panel,
 } from 'reactflow';
 
 import SideBarMain from './SideBar/SideBarMain';
-import { Box, Grid, Button } from '@mui/material';
-import { MyAppBar } from './MyAppBar';
 import { NodeDialog } from './Dialogs/NodeDialog';
 import { EdgeDialog } from './Dialogs/EdgeDialog';
-import { ExportExcel, ImportBackgroundNode, ImportExcel } from './FileHandler/FileHandler';
-import { getNewNode, getNewEdgeParams } from './utils';
-import { EdgeTypes, NodeTypes,} from './default';
-import './default.ts'
-import { myTheme } from './myTheme';
+import { ExportExcel, ImportBackgroundNode, ImportExcel } from '../FileHandler/FileHandler';
+import { getNewNode, getNewEdgeParams } from '../utils';
+import { EdgeTypes, NodeTypes,} from '../default';
+import { myTheme } from '../myTheme';
 import 'reactflow/dist/style.css';
-import { calc, calc2 } from './submit';
-import { SchemeDialog } from './Dialogs/SchemeDialog';
-import { GraphResult } from './Results/GraphResult';
-import { SchemeResult } from './Results/SchemeResult';
-import { TableResult } from './Results/TableResult';
+import { calc, calc2 } from '../submit';
+import { GraphResult } from '../Results/GraphResult';
+import { SchemeResult } from '../Results/SchemeResult';
+import { TableResult } from '../Results/TableResult';
+import { Button } from '@mui/material';
 
+type Props={
+  rereadingData:{[key:string]:string}|null,
+  setRereadingData:(data:{[key:string]:string}|null)=>void,
+  schemeData:{[key:string]:string}|null,
+  setSchemeData:(data:{[key:string]:string}|null)=>void,
+}
 
-
-export default function ContentMain(){
+export default function FlowMain(props:Props){
   const reactFlowWrapper = useRef<HTMLDivElement|null>(null);
   const [reactFlowInstance, setReactFlowInstance] = useState<any|null>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [doubleClickedNode, setDoubleClickedNode] = useState<Node|null>(null);
   const [doubleClickedEdge, setDoubleClickedEdge] = useState<Edge|null>(null);
-  const [openSchemeDialog, setOpenSchemeDialog] = useState<boolean>(false);
-  const [schemeData, setSchemeData] = useState<{[key:string]:string}|null>(null);
-  const [rereadingData, setRereadingData] = useState<{[key:string]:string}|null>(null);
+  // const [openSchemeDialog, setOpenSchemeDialog] = useState<boolean>(false);
+
   const [calculatedData, setCalculatedData] = useState<{[key:number]:number[]}>({});
   const [view, setView] = useState<"reactflow"|"scheme"|"graph"|"table">("reactflow");
-
-
+  
   // Edgeの追加処理
   const onConnect = useCallback((params: Edge<any> | Connection)=>{
       const newedgeparams = getNewEdgeParams(edges,params);
@@ -56,6 +57,9 @@ export default function ContentMain(){
         (sourceNodeType==='reaction' && targetNodeType==='reaction')
       )return;
       setEdges((eds)=>addEdge(newedgeparams,eds));
+      
+      const newedges:Edge<any>[] = [...edges,newedgeparams]
+      handleShowDerivative(nodes,newedges);
     }
     ,[nodes,edges,setEdges]
   );
@@ -125,8 +129,8 @@ export default function ContentMain(){
     ExportExcel(e,nodes,edges);
   },[edges, nodes]);
 
-  const handleShowDerivative=async()=>{
-    const res = await calc(nodes,edges);
+  const handleShowDerivative=async(NODES:Node[],EDGES:Edge[])=>{
+    const res = await calc(NODES,EDGES);
     console.log(res);
     
     const rereading_integrand = Object.assign({},...res.newnodes
@@ -152,24 +156,24 @@ export default function ContentMain(){
     console.log(scheme);
     console.log(rereading);
     // setOpenSchemeDialog(true);
-    setRereadingData(rereading);
-    setSchemeData(scheme);
-    setView("scheme");
+    props.setRereadingData(rereading);
+    props.setSchemeData(scheme);
+    // setView("scheme");
   }
 
-  const handleSolveDerivative=async()=>{
-    if(rereadingData!==null && schemeData!==null){
-      const initY:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type!=="reaction")
-                                              .map(rip=>({["Y["+rip.id.replace("m","")+"]"]:rip.data.initial_concentration})))
+  // const handleSolveDerivative=async()=>{
+  //   if(props.rereadingData!==null && props.schemeData!==null){
+  //     const initY:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type!=="reaction")
+  //                                             .map(rip=>({["Y["+rip.id.replace("m","")+"]"]:rip.data.initial_concentration})))
 
-      const params:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type==='reaction')
-                                               .map(rn=>({["k["+rn.id.replace("r","")+"]"]:rn.data.kinetic_constant})))
-      const res = await calc2(schemeData,initY,params);
-      const data = typeof(res.data)==='object' ? res.data : JSON.parse(res.data) //lambdaの場合は文字列で返してくる
-      setCalculatedData(data);
-    }
-    setView('graph');
-  }
+  //     const params:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type==='reaction')
+  //                                              .map(rn=>({["k["+rn.id.replace("r","")+"]"]:rn.data.kinetic_constant})))
+  //     const res = await calc2(props.schemeData,initY,params);
+  //     const data = typeof(res.data)==='object' ? res.data : JSON.parse(res.data) //lambdaの場合は文字列で返してくる
+  //     setCalculatedData(data);
+  //   }
+  //   setView('graph');
+  // }
 
 
   // 背景ノードの画像データ読込み
@@ -187,66 +191,66 @@ export default function ContentMain(){
         console.log(calculatedData);
       }}>test</Button>
        */}
-      <MyAppBar
+
+      {/* <MyAppBar
         handleImport={handleImport}
         handleExport={handleExport}
         handleImportBG={handleImportBG}
         setView={setView}
         handleShowDerivative={handleShowDerivative}
         handleSolveDerivative={handleSolveDerivative}
-      />
-      <Box sx={{width:'100%', height:'85vh'}}>
+      /> */}
         {view==="reactflow" && 
-          <Grid container>
-            <Grid item xs={3}>
-              <SideBarMain
-                NodeTypeKeys={Object.keys(NodeTypes)} // 組込みのノードを使用しない場合はこっち
-                Nodes={nodes}
-                Edges={edges}
-                setNodes={setNodes}
-                setEdges={setEdges}
-              />
-            </Grid>
-
-            <Grid item xs={9} height={'85vh'}>
-              <ReactFlowProvider>
-                <div style={{width:'100%', height:'85vh'}}  ref={reactFlowWrapper}>
-                  <ReactFlow
-                    nodes={nodes}
-                    edges={edges}
-                    onNodesChange={onNodesChange}
-                    onEdgesChange={onEdgesChange}
-                    onEdgeUpdate={onEdgeUpdate}
-                    nodeTypes={NodeTypes}
-                    edgeTypes={EdgeTypes}
-                    onConnect={onConnect}
-                    onInit={setReactFlowInstance}
-                    onDrop={onDrop}
-                    onDragOver={onDragOver}
-                    onEdgeDoubleClick={(event, edge)=>handleEdgeDoubleClick(event,edge)}
-                    onNodeDoubleClick={(event, node)=>handleNodeDoubleClick(event,node)}
-                    fitView
-                  >
-                    <Background style={{backgroundColor:myTheme.palette.grey[200]}}/>
-                    <Controls />
-                  </ReactFlow>
-                  {doubleClickedNode!==null && <NodeDialog open={true} onClose={(node)=>handleNodeDialogClose(node)} node={doubleClickedNode} nodes={nodes}/>}
-                  {doubleClickedEdge!==null && <EdgeDialog open={true} onClose={(edge)=>handleEdgeDialogClose(edge)} edge={doubleClickedEdge}/>}
-                  {openSchemeDialog && <SchemeDialog open={true} onClose={()=>setOpenSchemeDialog(false)} schemedata={schemeData} rereadingdata={rereadingData}/>}
-                </div>
-              </ReactFlowProvider>
-            </Grid>
-          </Grid>
+          <ReactFlowProvider>
+            <div style={{width:'100%', height:'65vh'}}  ref={reactFlowWrapper}>
+              <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onEdgeUpdate={onEdgeUpdate}
+                nodeTypes={NodeTypes}
+                edgeTypes={EdgeTypes}
+                onConnect={onConnect}
+                onInit={setReactFlowInstance}
+                onDrop={onDrop}
+                onDragOver={onDragOver}
+                onEdgeDoubleClick={(event, edge)=>handleEdgeDoubleClick(event,edge)}
+                onNodeDoubleClick={(event, node)=>handleNodeDoubleClick(event,node)}
+                fitView
+                // style={reactFlowStyle}
+              >
+              <Background style={{backgroundColor:myTheme.palette.grey[200],borderRadius:20}}/>
+              <Controls />
+              <Panel position="top-left">
+                {/* <Button onClick={()=>handleShowDerivative(nodes,edges)}>test</Button>
+                <Button onClick={()=>console.log(nodes,edges)}>test</Button> */}
+                <SideBarMain
+                  NodeTypeKeys={Object.keys(NodeTypes)} // 組込みのノードを使用しない場合はこっち
+                  Nodes={nodes}
+                  Edges={edges}
+                  setNodes={setNodes}
+                  setEdges={setEdges}
+                />
+              </Panel>
+              </ReactFlow>
+              {doubleClickedNode!==null && <NodeDialog open={true} onClose={(node)=>handleNodeDialogClose(node)} node={doubleClickedNode} nodes={nodes}/>}
+              {doubleClickedEdge!==null && <EdgeDialog open={true} onClose={(edge)=>handleEdgeDialogClose(edge)} edge={doubleClickedEdge}/>}
+              {/* {openSchemeDialog && <SchemeDialog open={true} onClose={()=>setOpenSchemeDialog(false)} schemedata={schemeData} rereadingdata={rereadingData}/>} */}
+            </div>
+          </ReactFlowProvider>
+        
+          
         } 
-        {(view==="scheme") &&
+        {/* {(view==="scheme") &&
           <SchemeResult
-            schemedata={schemeData}
-            rereadingdata={rereadingData}
+            schemedata={props.schemeData}
+            rereadingdata={props.rereadingData}
           />
         }        
         {(view==="graph" && Object.keys(calculatedData).length>0) &&
           <GraphResult
-            integrand={schemeData!==null ? Object.keys(schemeData):[]}
+            integrand={props.schemeData!==null ? Object.keys(props.schemeData):[]}
             calculatedData={calculatedData}
             nodes={nodes}
             xmin={0}
@@ -255,14 +259,11 @@ export default function ContentMain(){
         }
         {(view==="table" && Object.keys(calculatedData).length>0) &&
         <TableResult
-          integrand={schemeData!==null ? Object.keys(schemeData):[]}
+          integrand={props.schemeData!==null ? Object.keys(props.schemeData):[]}
           calculatedData={calculatedData}
           nodes={nodes}
         />
-        }        
-
-      </Box>
-
+        }         */}
     </div>
   );
 };
