@@ -11,6 +11,10 @@ import ReactFlow, {
   Background,
   updateEdge,
   Panel,
+  NodeChange,
+  EdgeChange,
+  OnNodesChange,
+  OnEdgesChange,
 } from 'reactflow';
 
 import SideBarMain from './SideBar/SideBarMain';
@@ -32,13 +36,19 @@ type Props={
   setRereadingData:(data:{[key:string]:string}|null)=>void,
   schemeData:{[key:string]:string}|null,
   setSchemeData:(data:{[key:string]:string}|null)=>void,
+  nodes: Node<any, string | undefined>[],
+  setNodes: React.Dispatch<React.SetStateAction<Node<any, string | undefined>[]>>,
+  onNodesChange: OnNodesChange,
+  edges: Edge<any>[],
+  setEdges: React.Dispatch<React.SetStateAction<Edge<any>[]>>,
+  onEdgesChange: OnEdgesChange
 }
 
 export default function FlowMain(props:Props){
   const reactFlowWrapper = useRef<HTMLDivElement|null>(null);
   const [reactFlowInstance, setReactFlowInstance] = useState<any|null>(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  // const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  // const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [doubleClickedNode, setDoubleClickedNode] = useState<Node|null>(null);
   const [doubleClickedEdge, setDoubleClickedEdge] = useState<Edge|null>(null);
   // const [openSchemeDialog, setOpenSchemeDialog] = useState<boolean>(false);
@@ -48,25 +58,25 @@ export default function FlowMain(props:Props){
   
   // Edgeの追加処理
   const onConnect = useCallback((params: Edge<any> | Connection)=>{
-      const newedgeparams = getNewEdgeParams(edges,params);
-      const sourceNodeType = nodes.filter(n=>n.id===newedgeparams.source)[0].type
-      const targetNodeType = nodes.filter(n=>n.id===newedgeparams.target)[0].type
+      const newedgeparams = getNewEdgeParams(props.edges,params);
+      const sourceNodeType = props.nodes.filter(n=>n.id===newedgeparams.source)[0].type
+      const targetNodeType = props.nodes.filter(n=>n.id===newedgeparams.target)[0].type
       if(
         (sourceNodeType==='reactant' && targetNodeType==='intermediate') ||
         (sourceNodeType==='reactant' && targetNodeType==='product') ||
         (sourceNodeType==='reaction' && targetNodeType==='reaction')
       )return;
-      setEdges((eds)=>addEdge(newedgeparams,eds));
+      props.setEdges((eds)=>addEdge(newedgeparams,eds));
       
-      const newedges:Edge<any>[] = [...edges,newedgeparams]
-      handleShowDerivative(nodes,newedges);
+      const newedges:Edge<any>[] = [...props.edges,newedgeparams]
+      handleShowDerivative(props.nodes,newedges);
     }
-    ,[nodes,edges,setEdges]
+    ,[props.nodes,props.edges,props.setEdges]
   );
 
   // Edgeの繋ぎ変え処理(Edge Update)
   const onEdgeUpdate = useCallback(
-    (oldEdge: Edge<any>, newConnection: Connection) => setEdges((els) => updateEdge(oldEdge, newConnection, els)),
+    (oldEdge: Edge<any>, newConnection: Connection) => props.setEdges((els) => updateEdge(oldEdge, newConnection, els)),
     []
   );
 
@@ -78,10 +88,10 @@ export default function FlowMain(props:Props){
 
   const onDrop = useCallback((event:{preventDefault:()=>void; dataTransfer:{getData:(arg0:string)=>any;}; clientX:number; clientY: number;}) => 
     {
-      const newnode = getNewNode(event,reactFlowWrapper,reactFlowInstance,nodes);
-      newnode!==undefined && setNodes((nds) => nds.concat(newnode))
+      const newnode = getNewNode(event,reactFlowWrapper,reactFlowInstance,props.nodes);
+      newnode!==undefined && props.setNodes((nds) => nds.concat(newnode))
     },
-    [reactFlowInstance, nodes, setNodes]
+    [reactFlowInstance, props.nodes, props.setNodes]
   );
 
   // Nodeのプロパティ入力
@@ -93,13 +103,13 @@ export default function FlowMain(props:Props){
 
   const handleNodeDialogClose=useCallback((node?:Node)=>{
     if(node!==undefined){
-      const tmpnode = nodes.filter(n=> n.id!==node.id);
+      const tmpnode = props.nodes.filter(n=> n.id!==node.id);
       const newnodes = [...tmpnode, node];
-      setNodes(newnodes);
+      props.setNodes(newnodes);
     }
     setDoubleClickedNode(null);
     },
-    [nodes, setNodes, setDoubleClickedNode]
+    [props.nodes, props.setNodes, setDoubleClickedNode]
   )
 
   // Edgeのプロパティ入力
@@ -111,23 +121,23 @@ export default function FlowMain(props:Props){
 
   const handleEdgeDialogClose=useCallback((edge?:Edge)=>{
     if(edge!==undefined){
-      const tmpedge = edges.filter(e=> e.id!==edge.id);
+      const tmpedge = props.edges.filter(e=> e.id!==edge.id);
       const newedges = [...tmpedge, edge];
-      setEdges(newedges);
+      props.setEdges(newedges);
     }
     setDoubleClickedEdge(null);
     },
-    [edges,setEdges,setDoubleClickedEdge]
+    [props.edges,props.setEdges,setDoubleClickedEdge]
   )
 
   // ファイル入出力
   const handleImport = useCallback((e:ChangeEvent<HTMLInputElement>) => {
-    ImportExcel(e,setNodes,setEdges);
-  },[setEdges, setNodes]);
+    ImportExcel(e,props.setNodes,props.setEdges);
+  },[props.setEdges, props.setNodes]);
 
   const handleExport=useCallback((e:{ preventDefault: () => void; })=>{
-    ExportExcel(e,nodes,edges);
-  },[edges, nodes]);
+    ExportExcel(e,props.nodes,props.edges);
+  },[props.edges, props.nodes]);
 
   const handleShowDerivative=async(NODES:Node[],EDGES:Edge[])=>{
     const res = await calc(NODES,EDGES);
@@ -178,7 +188,7 @@ export default function FlowMain(props:Props){
 
   // 背景ノードの画像データ読込み
   const handleImportBG = React.useCallback((e:React.ChangeEvent<HTMLInputElement>) => {
-    ImportBackgroundNode(e,setNodes);
+    ImportBackgroundNode(e,props.setNodes);
   }, []);
 
   return (
@@ -204,10 +214,10 @@ export default function FlowMain(props:Props){
           <ReactFlowProvider>
             <div style={{width:'100%', height:'65vh'}}  ref={reactFlowWrapper}>
               <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
+                nodes={props.nodes}
+                edges={props.edges}
+                onNodesChange={props.onNodesChange}
+                onEdgesChange={props.onEdgesChange}
                 onEdgeUpdate={onEdgeUpdate}
                 nodeTypes={NodeTypes}
                 edgeTypes={EdgeTypes}
@@ -227,14 +237,14 @@ export default function FlowMain(props:Props){
                 <Button onClick={()=>console.log(nodes,edges)}>test</Button> */}
                 <SideBarMain
                   NodeTypeKeys={Object.keys(NodeTypes)} // 組込みのノードを使用しない場合はこっち
-                  Nodes={nodes}
-                  Edges={edges}
-                  setNodes={setNodes}
-                  setEdges={setEdges}
+                  Nodes={props.nodes}
+                  Edges={props.edges}
+                  setNodes={props.setNodes}
+                  setEdges={props.setEdges}
                 />
               </Panel>
               </ReactFlow>
-              {doubleClickedNode!==null && <NodeDialog open={true} onClose={(node)=>handleNodeDialogClose(node)} node={doubleClickedNode} nodes={nodes}/>}
+              {doubleClickedNode!==null && <NodeDialog open={true} onClose={(node)=>handleNodeDialogClose(node)} node={doubleClickedNode} nodes={props.nodes}/>}
               {doubleClickedEdge!==null && <EdgeDialog open={true} onClose={(edge)=>handleEdgeDialogClose(edge)} edge={doubleClickedEdge}/>}
               {/* {openSchemeDialog && <SchemeDialog open={true} onClose={()=>setOpenSchemeDialog(false)} schemedata={schemeData} rereadingdata={rereadingData}/>} */}
             </div>

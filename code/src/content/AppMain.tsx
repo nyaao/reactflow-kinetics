@@ -11,6 +11,7 @@ import { Formulae } from "./Diagram/Formulae";
 import { Infomation } from "./Diagram/Infomation";
 import { ResultMain } from "./Results/ResultMain";
 import { calc2 } from "./submit";
+import { useEdgesState, useNodesState } from "reactflow";
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
     open?: boolean;
@@ -34,6 +35,8 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
   export function AppMain() {
     const [isOpen, setOpenState] = useState<boolean>(true);
     const [view, setView] = useState<'diagram'|'result'>('diagram');
+    const [nodes, setNodes, onNodesChange] = useNodesState([]);
+    const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [schemeData, setSchemeData] = useState<{[key:string]:string}|null>(null);
     const [rereadingData, setRereadingData] = useState<{[key:string]:string}|null>(null);
     const [calculatedData, setCalculatedData] = useState<{[key:number]:number[]}>({});
@@ -176,6 +179,12 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
                     setRereadingData={setRereadingData}
                     schemeData={schemeData}
                     setSchemeData={setSchemeData}
+                    nodes={nodes}
+                    setNodes={setNodes}
+                    onNodesChange={onNodesChange}
+                    edges={edges}
+                    setEdges={setEdges}
+                    onEdgesChange={onEdgesChange}
                   />
                 </Box>
               </Paper>
