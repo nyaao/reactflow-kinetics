@@ -1,6 +1,6 @@
-import { Box, CssBaseline, AppBar, Toolbar, IconButton, Typography, Drawer, List, ListItem, ListItemText, ListItemButton, Paper, Grid, Button } from "@mui/material";
+import { Box, CssBaseline, AppBar, Toolbar, IconButton, Typography, Drawer, List, ListItem, ListItemText, ListItemButton, Paper, Grid, Button, Menu, MenuItem } from "@mui/material";
 import { styled } from '@mui/material/styles';
-import React, { useState } from "react";
+import React, { ChangeEvent, useCallback, useRef, useState } from "react";
 import MenuIcon from '@mui/icons-material/Menu';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
@@ -12,6 +12,7 @@ import { Infomation } from "./Diagram/Infomation";
 import { ResultMain } from "./Results/ResultMain";
 import { calc2 } from "./submit";
 import { useEdgesState, useNodesState } from "reactflow";
+import { ExportExcel, ImportExcel } from "./FileHandler/FileHandler";
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
     open?: boolean;
@@ -33,8 +34,11 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
   }));
   
   export function AppMain() {
-    const [isOpen, setOpenState] = useState<boolean>(true);
+    const [isOpen, setOpenState] = useState<boolean>(false);
     const [view, setView] = useState<'diagram'|'result'>('diagram');
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+    const inputRef = useRef<HTMLInputElement>(null);
     const [nodes, setNodes, onNodesChange] = useNodesState([]);
     const [edges, setEdges, onEdgesChange] = useEdgesState([]);
     const [schemeData, setSchemeData] = useState<{[key:string]:string}|null>(null);
@@ -45,18 +49,25 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
       setOpenState(!isOpen);
     };
 
-    // const handleSolveDerivative=async()=>{
-    //   if(rereadingData!==null && schemeData!==null){
-    //     const initY:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type!=="reaction")
-    //                                             .map(rip=>({["Y["+rip.id.replace("m","")+"]"]:rip.data.initial_concentration})))
+    const handleClose = () => {
+      setAnchorEl(null);
+    };
   
-    //     const params:{[key:string]:number} = Object.assign({},...nodes.filter(n=>n.type==='reaction')
-    //                                              .map(rn=>({["k["+rn.id.replace("r","")+"]"]:rn.data.kinetic_constant})))
-    //     const res = await calc2(schemeData,initY,params);
-    //     const data = typeof(res.data)==='object' ? res.data : JSON.parse(res.data) //lambdaの場合は文字列で返してくる
-    //     setCalculatedData(data);
-    //   }
-    // }
+    const handleClickListItem = (event: React.MouseEvent<HTMLElement>) => {
+      setAnchorEl(event.currentTarget);
+    };
+
+    const fileUpload=()=>{
+      inputRef.current!==null && inputRef.current.click();
+    }
+
+    const handleImport = useCallback((e:ChangeEvent<HTMLInputElement>) => {
+      ImportExcel(e,setNodes,setEdges);
+    },[setEdges, setNodes]);
+  
+    const handleExport=useCallback((e:{ preventDefault: () => void; })=>{
+      ExportExcel(e,nodes,edges);
+    },[edges, nodes]);
 
     return (
       <Box sx={{ display: "flex" }}>
@@ -88,7 +99,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
               >
                 Application
               </Typography>
-              <Button onClick={()=>console.log("")}>debug</Button>
+              {/* <Button onClick={()=>console.log("")}>debug</Button> */}
             </Toolbar>
           </AppBar>
         </Box>
@@ -110,19 +121,45 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
           <Box sx={{ overflow: "auto" }}>
             <List>
               <ListItemButton>
-                <ListItem onClick={()=>console.log()}>
+                <ListItem onClick={(e)=>handleClickListItem(e)}>
                   <FileOpenIcon sx={{ color: myTheme.palette.primary.dark }}/>
                   <Typography sx={{ p:1,color: myTheme.palette.primary.dark }}>ファイル</Typography>
                 </ListItem>
               </ListItemButton>
+              <Menu
+                id="lock-menu"
+                anchorEl={anchorEl}
+                open={open}
+                onClose={handleClose}
+                MenuListProps={{
+                  'aria-labelledby': 'lock-button',
+                  role: 'listbox',
+                }}
+              >
+                <MenuItem onClick={fileUpload} dense>
+                  import
+                  <input
+                    type="file"
+                    hidden
+                    ref={inputRef}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) => {
+                      e.target.files && handleImport(e);
+                      setAnchorEl(null);
+                    }}
+                  />
+                </MenuItem>       
+                <MenuItem onClick={(e)=>handleExport(e)} dense>
+                  export
+                </MenuItem>                
+              </Menu>
               <ListItemButton>
-                <ListItem onClick={()=>setView('diagram')}>
+                <ListItem onClick={()=>{setView('diagram');setOpenState(false);}}>
                   <AccountTreeIcon sx={{ color: myTheme.palette.primary.dark }}/>
                   <Typography sx={{ p:1,color: myTheme.palette.primary.dark }}>ダイアグラム</Typography>
                 </ListItem>
               </ListItemButton>
               <ListItemButton>
-                <ListItem onClick={()=>setView('result')}>
+                <ListItem onClick={()=>{setView('result');setOpenState(false)}}>
                     <AutoGraphIcon sx={{ color: myTheme.palette.primary.dark }}/>
                     <Typography sx={{ p:1,color: myTheme.palette.primary.dark }}>計算結果表示</Typography>
                 </ListItem>
@@ -131,76 +168,79 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
           </Box>
         </Drawer>
 
-  
-
 
         <Main open={isOpen}>
           <Toolbar />
           <Grid container spacing={1} display='flex' alignItems='center'>
             {view==="diagram" && 
             <>
-            <Grid item xs={6}>
+              <Grid item xs={3}>
               <Paper>
                 <Box sx={{width:"100%",height:"20vh",overflow:'auto',backgroundColor:myTheme.palette.grey[200],borderRadius:5}}>
-                  <Formulae
+                  <Infomation
                     rereadingData={rereadingData}
                     schemeData={schemeData}
+                    identifier="Y"
                   />
                 </Box>
-              </Paper>
-            </Grid>
-            <Grid item xs={3}>
-            <Paper>
-              <Box sx={{width:"100%",height:"20vh",overflow:'auto',backgroundColor:myTheme.palette.grey[200],borderRadius:5}}>
-                <Infomation
-                  rereadingData={rereadingData}
-                  schemeData={schemeData}
-                  identifier="Y"
-                />
-              </Box>
-              </Paper>
-            </Grid>       
-            <Grid item xs={3}>
-            <Paper>
-              <Box sx={{width:"100%",height:"20vh",overflow:'auto',backgroundColor:myTheme.palette.grey[200],borderRadius:5}}>
-                <Infomation
-                  rereadingData={rereadingData}
-                  schemeData={schemeData}
-                  identifier="k"
-                />
-              </Box>
-              </Paper>
-            </Grid>                    
-            <Grid item xs={12}>
+                </Paper>
+              </Grid>   
+
+              <Grid item xs={3}>
               <Paper>
-                <Box sx={{width:'100%', height:'65vh'}}>
-                  <FlowMain
+                <Box sx={{width:"100%",height:"20vh",overflow:'auto',backgroundColor:myTheme.palette.grey[200],borderRadius:5}}>
+                  <Infomation
                     rereadingData={rereadingData}
-                    setRereadingData={setRereadingData}
                     schemeData={schemeData}
-                    setSchemeData={setSchemeData}
-                    nodes={nodes}
-                    setNodes={setNodes}
-                    onNodesChange={onNodesChange}
-                    edges={edges}
-                    setEdges={setEdges}
-                    onEdgesChange={onEdgesChange}
+                    identifier="k"
                   />
                 </Box>
-              </Paper>
-            </Grid>
+                </Paper>
+              </Grid>
+
+              <Grid item xs={6}>
+                <Paper>
+                  <Box sx={{width:"100%",height:"20vh",overflow:'auto',backgroundColor:myTheme.palette.grey[200],borderRadius:5}}>
+                    <Formulae
+                      rereadingData={rereadingData}
+                      schemeData={schemeData}
+                    />
+                  </Box>
+                </Paper>
+              </Grid>
+
+              <Grid item xs={12}>
+                <Paper>
+                  <Box sx={{width:'100%', height:'65vh'}}>
+                    <FlowMain
+                      rereadingData={rereadingData}
+                      setRereadingData={setRereadingData}
+                      schemeData={schemeData}
+                      setSchemeData={setSchemeData}
+                      nodes={nodes}
+                      setNodes={setNodes}
+                      onNodesChange={onNodesChange}
+                      edges={edges}
+                      setEdges={setEdges}
+                      onEdgesChange={onEdgesChange}
+                    />
+                  </Box>
+                </Paper>
+              </Grid>
             </>
             }
             {view === "result" &&
             <ResultMain
               schemeData={schemeData}
+              rereadingData={rereadingData}
               calculatedData={calculatedData}
-              nodes={[]}
+              setCalculateData={setCalculatedData}
+              nodes={nodes}
+              setNodes={setNodes}
               xmin={0}
               xmax={100}
             />
             }
-            
           </Grid>
         </Main>
 

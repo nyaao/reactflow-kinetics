@@ -18,9 +18,9 @@ export const calc=async(nodes:Node[],edges:Edge[])=>{
     
   }
 
-  export const calc2=async(SCHEMEDATA:{[key:string]:string},INITY:{[key:string]:number},PARAMS:{[key:string]:number})=>{
-    // const res = await axios.post('',{body:{scheme:SCHEMEDATA,init_y:INITY,params:PARAMS}}) //lambda
-    const res = await axios.post('http://127.0.0.1:8000/parseDifferentialEq/',{body:{scheme:SCHEMEDATA,init_y:INITY,params:PARAMS}})
+  export const calc2=async(SCHEMEDATA:{[key:string]:string},INITY:{[key:string]:number},PARAMS:{[key:string]:number},time:{min:number,max:number})=>{
+    // const res = await axios.post('',{body:{scheme:SCHEMEDATA,init_y:INITY,params:PARAMS,time}}) //lambda
+    const res = await axios.post('http://127.0.0.1:8000/parseDifferentialEq/',{body:{scheme:SCHEMEDATA,init_y:INITY,params:PARAMS,time:time}})
     // const retnodes:Node[] = JSON.parse(res.data.nodes);
     // const newnodes = nodes.map((n,i)=>(Object.assign({},
     //   createDefaultNodeParams(n.type as string, n.position),

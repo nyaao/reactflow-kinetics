@@ -53,44 +53,35 @@ const colors=[
 ]
 
 export const GraphResult=(props:Props)=>{
-  // const time = Object.keys(props.calculatedData);
-  // const rowdata = Object.values(props.calculatedData);
-  // const mids = props.integrand.map(integ=>Number(integ.replace('Y[',"").replace("]","")))
-  // const data_selected = rowdata.map((d)=>d.filter((_,i)=>mids.includes(i)));
+  const time = Object.keys(props.calculatedData);
+  const rowdata = Object.values(props.calculatedData);
+  const mids = props.integrand.map(integ=>Number(integ.replace('Y[',"").replace("]","")))
+  const data_selected = rowdata.map((d)=>d.filter((_,i)=>mids.includes(i)));
 
-  // const plot_data = [...Array(data_selected[0].length)].map((v,i)=>
-  //   time.map((time,j)=>(
-  //       {x:Number(time),y:data_selected[j][i]}
-  //   ))
-  // );
-  // const label=[...mids].sort((a,b)=>a-b).map(mi=>"Y["+mi+"]");
-  // const symbols=[...mids].sort((a,b)=>a-b).map(mi=>props.nodes.filter(n=>n.id==="m"+mi)[0]).map(n=>n.data.symbol);
-  
-  // const graphData = {
-  //   datasets:plot_data.map((data,i)=>({
-  //     label:symbols[i] === '' ? label[i] : symbols[i],
-  //     data:data,
-  //     borderColor: colors[i%8],
-  //     radius:0,
-  //     showLine:true
-  //   }))
-  // };
-
+  const plot_data = data_selected.length>0 ? [...Array(data_selected[0].length)].map((v,i)=>
+    time.map((time,j)=>(
+        {x:Number(time),y:data_selected[j][i]}
+    ))
+  ):[];
+  const label=[...mids].sort((a,b)=>a-b).map(mi=>"Y["+mi+"]");
+  const symbols=[...mids].sort((a,b)=>a-b).map(mi=>props.nodes.filter(n=>n.id==="m"+mi)[0]).map(n=>n.data.symbol);
   
   const graphData = {
-      datasets: [
-      {
-        label: "",
-        data: [0.0],
-      },
-    ],
+    datasets:plot_data.map((data,i)=>({
+      label:symbols[i] === '' ? label[i] : symbols[i],
+      data:data,
+      borderColor: colors[i%8],
+      radius:0,
+      showLine:true
+    }))
   };
 
 
   const options: ChartOptions<'line'> = {
 
-    maintainAspectRatio: false,
+    maintainAspectRatio: true,
     responsive: true,
+    aspectRatio:3,
     animation: false,
     parsing: false,
     interaction: {
@@ -131,13 +122,15 @@ export const GraphResult=(props:Props)=>{
 
   return (
     <>
+      {/* <div style= {{width:'100%', height:'60vh'}}> */}
       <div>
         <Line
-          height={400}
-        //   width={800}
+          // height={'100vh'}
+          // width={'800%'}
           data={graphData}
           options={options}
           id="chart-key"
+          // style={{position: "relative", width:'100%', height:'60vh'}}
         />
       </div>
     </>
