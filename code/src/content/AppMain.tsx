@@ -10,8 +10,8 @@ import FlowMain from "./ReactFlow/FlowMain";
 import { Formulae } from "./Diagram/Formulae";
 import { Infomation } from "./Diagram/Infomation";
 import { ResultMain } from "./Results/ResultMain";
-import { calc2 } from "./submit";
-import { useEdgesState, useNodesState } from "reactflow";
+import { calc, calc2 } from "./submit";
+import { Node,Edge, useEdgesState, useNodesState } from "reactflow";
 import { ExportExcel, ImportExcel } from "./FileHandler/FileHandler";
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
@@ -62,12 +62,45 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
     }
 
     const handleImport = useCallback((e:ChangeEvent<HTMLInputElement>) => {
-      ImportExcel(e,setNodes,setEdges);
+      ImportExcel(e,setNodes,setEdges,handleShowDerivative);
     },[setEdges, setNodes]);
   
     const handleExport=useCallback((e:{ preventDefault: () => void; })=>{
-      ExportExcel(e,nodes,edges);
-    },[edges, nodes]);
+      ExportExcel(e,nodes,edges,schemeData);
+    },[edges, nodes, schemeData]);
+    
+    const handleShowDerivative=async(NODES?:Node[],EDGES?:Edge[])=>{
+      const tmpnodes = NODES===undefined ? nodes : NODES
+      const tmpedges = EDGES===undefined ? edges : EDGES
+      const res = await calc(tmpnodes,tmpedges);
+
+      console.log(res);
+      
+      const rereading_integrand = Object.assign({},...res.newnodes
+        .filter((nn)=>nn.type!=='reaction')
+        .map((nn)=>(
+        {["Y["+nn.id.replace("m","")+"]"]:"["+nn.data.symbol+"]"}
+      )));
+
+      const rereading_reaction = Object.assign({},...res.newnodes
+        .filter((nn)=>nn.type==='reaction')
+        .map((nn)=>(
+        {["k["+nn.id.replace("r","")+"]"]:"k_"+nn.id.replace("r","")}
+      )));        
+
+      const rereading=Object.assign({},rereading_integrand,rereading_reaction)
+
+      const scheme = Object.assign({},...res.newnodes
+        .filter((nn)=>nn.type!=='reaction')                    
+        .map((nn)=>(
+        {["Y["+nn.id.replace("m","")+"]"]:nn.data.equation}
+      )));
+
+      console.log(scheme);
+      console.log(rereading);
+      setRereadingData(rereading);
+      setSchemeData(scheme);
+    }    
 
     return (
       <Box sx={{ display: "flex" }}>
@@ -99,7 +132,11 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
               >
                 Application
               </Typography>
-              {/* <Button onClick={()=>console.log("")}>debug</Button> */}
+              <Button onClick={()=>{
+                console.log("nodes",nodes)
+                console.log("edges",edges)
+                console.log("schemeData",schemeData)
+                }}>debug</Button>
             </Toolbar>
           </AppBar>
         </Box>
@@ -136,7 +173,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
                   role: 'listbox',
                 }}
               >
-                <MenuItem onClick={fileUpload} dense>
+                <MenuItem onClick={()=>fileUpload()} dense>
                   import
                   <input
                     type="file"
@@ -161,7 +198,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
               <ListItemButton>
                 <ListItem onClick={()=>{setView('result');setOpenState(false)}}>
                     <AutoGraphIcon sx={{ color: myTheme.palette.primary.dark }}/>
-                    <Typography sx={{ p:1,color: myTheme.palette.primary.dark }}>計算結果表示</Typography>
+                    <Typography sx={{ p:1,color: myTheme.palette.primary.dark }}>計算結果</Typography>
                 </ListItem>
               </ListItemButton>
             </List>
@@ -213,16 +250,13 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
                 <Paper>
                   <Box sx={{width:'100%', height:'65vh'}}>
                     <FlowMain
-                      rereadingData={rereadingData}
-                      setRereadingData={setRereadingData}
-                      schemeData={schemeData}
-                      setSchemeData={setSchemeData}
                       nodes={nodes}
                       setNodes={setNodes}
                       onNodesChange={onNodesChange}
                       edges={edges}
                       setEdges={setEdges}
                       onEdgesChange={onEdgesChange}
+                      handleShowDerivative={handleShowDerivative}
                     />
                   </Box>
                 </Paper>

@@ -24,16 +24,17 @@ import 'reactflow/dist/style.css';
 import { calc } from '../submit';
 
 type Props={
-  rereadingData:{[key:string]:string}|null,
-  setRereadingData:(data:{[key:string]:string}|null)=>void,
-  schemeData:{[key:string]:string}|null,
-  setSchemeData:(data:{[key:string]:string}|null)=>void,
+  // rereadingData:{[key:string]:string}|null,
+  // setRereadingData:(data:{[key:string]:string}|null)=>void,
+  // schemeData:{[key:string]:string}|null,
+  // setSchemeData:(data:{[key:string]:string}|null)=>void,
   nodes: Node<any, string | undefined>[],
   setNodes: React.Dispatch<React.SetStateAction<Node<any, string | undefined>[]>>,
   onNodesChange: OnNodesChange,
   edges: Edge<any>[],
   setEdges: React.Dispatch<React.SetStateAction<Edge<any>[]>>,
-  onEdgesChange: OnEdgesChange
+  onEdgesChange: OnEdgesChange,
+  handleShowDerivative:(NODES:Node[],EDGES:Edge[])=>void
 }
 
 export default function FlowMain(props:Props){
@@ -55,7 +56,7 @@ export default function FlowMain(props:Props){
       props.setEdges((eds)=>addEdge(newedgeparams,eds));
       
       const newedges:Edge<any>[] = [...props.edges,newedgeparams]
-      handleShowDerivative(props.nodes,newedges);
+      props.handleShowDerivative(props.nodes,newedges);
     }
     ,[props.nodes,props.edges,props.setEdges]
   );
@@ -92,7 +93,7 @@ export default function FlowMain(props:Props){
       const tmpnode = props.nodes.filter(n=> n.id!==node.id);
       const newnodes = [...tmpnode, node];
       props.setNodes(newnodes);
-      handleShowDerivative(newnodes,props.edges);
+      props.handleShowDerivative(newnodes,props.edges);
     }
     setDoubleClickedNode(null);
     },
@@ -117,44 +118,35 @@ export default function FlowMain(props:Props){
     [props.edges,props.setEdges,setDoubleClickedEdge]
   )
 
-  // ファイル入出力
-  const handleImport = useCallback((e:ChangeEvent<HTMLInputElement>) => {
-    ImportExcel(e,props.setNodes,props.setEdges);
-  },[props.setEdges, props.setNodes]);
-
-  const handleExport=useCallback((e:{ preventDefault: () => void; })=>{
-    ExportExcel(e,props.nodes,props.edges);
-  },[props.edges, props.nodes]);
-
-  const handleShowDerivative=async(NODES:Node[],EDGES:Edge[])=>{
-    const res = await calc(NODES,EDGES);
-    console.log(res);
+  // const handleShowDerivative=async(NODES:Node[],EDGES:Edge[])=>{
+  //   const res = await calc(NODES,EDGES);
+  //   console.log(res);
     
-    const rereading_integrand = Object.assign({},...res.newnodes
-      .filter((nn)=>nn.type!=='reaction')
-      .map((nn)=>(
-      {["Y["+nn.id.replace("m","")+"]"]:"["+nn.data.symbol+"]"}
-    )));
+  //   const rereading_integrand = Object.assign({},...res.newnodes
+  //     .filter((nn)=>nn.type!=='reaction')
+  //     .map((nn)=>(
+  //     {["Y["+nn.id.replace("m","")+"]"]:"["+nn.data.symbol+"]"}
+  //   )));
 
-    const rereading_reaction = Object.assign({},...res.newnodes
-      .filter((nn)=>nn.type==='reaction')
-      .map((nn)=>(
-      {["k["+nn.id.replace("r","")+"]"]:"k_"+nn.id.replace("r","")}
-    )));        
+  //   const rereading_reaction = Object.assign({},...res.newnodes
+  //     .filter((nn)=>nn.type==='reaction')
+  //     .map((nn)=>(
+  //     {["k["+nn.id.replace("r","")+"]"]:"k_"+nn.id.replace("r","")}
+  //   )));        
 
-    const rereading=Object.assign({},rereading_integrand,rereading_reaction)
+  //   const rereading=Object.assign({},rereading_integrand,rereading_reaction)
 
-    const scheme = Object.assign({},...res.newnodes
-      .filter((nn)=>nn.type!=='reaction')                    
-      .map((nn)=>(
-      {["Y["+nn.id.replace("m","")+"]"]:nn.data.equation}
-    )));
+  //   const scheme = Object.assign({},...res.newnodes
+  //     .filter((nn)=>nn.type!=='reaction')                    
+  //     .map((nn)=>(
+  //     {["Y["+nn.id.replace("m","")+"]"]:nn.data.equation}
+  //   )));
 
-    console.log(scheme);
-    console.log(rereading);
-    props.setRereadingData(rereading);
-    props.setSchemeData(scheme);
-  }
+  //   console.log(scheme);
+  //   console.log(rereading);
+  //   props.setRereadingData(rereading);
+  //   props.setSchemeData(scheme);
+  // }
 
   // 背景ノードの画像データ読込み
   const handleImportBG = React.useCallback((e:React.ChangeEvent<HTMLInputElement>) => {
