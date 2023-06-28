@@ -1,6 +1,6 @@
 import { Box, CssBaseline, AppBar, Toolbar, IconButton, Typography, Drawer, List, ListItem, ListItemText, ListItemButton, Paper, Grid, Button, Menu, MenuItem } from "@mui/material";
 import { styled } from '@mui/material/styles';
-import React, { ChangeEvent, useCallback, useRef, useState } from "react";
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import MenuIcon from '@mui/icons-material/Menu';
 import FileOpenIcon from '@mui/icons-material/FileOpen';
 import AutoGraphIcon from '@mui/icons-material/AutoGraph';
@@ -44,6 +44,10 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
     const [schemeData, setSchemeData] = useState<{[key:string]:string}|null>(null);
     const [rereadingData, setRereadingData] = useState<{[key:string]:string}|null>(null);
     const [calculatedData, setCalculatedData] = useState<{[key:number]:number[]}>({});
+    const [expData, setExpData] = useState<{[key:string]:number}[]>([]);
+    //expData
+    //[{id:0, time:0.0, '[A]':0.3, '[B]':0.0}]
+
 
     const toggleOpenState = (): void => {
       setOpenState(!isOpen);
@@ -136,6 +140,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
                 console.log("nodes",nodes)
                 console.log("edges",edges)
                 console.log("schemeData",schemeData)
+                console.log("rereadingData",rereadingData)
                 }}>debug</Button>
             </Toolbar>
           </AppBar>
@@ -196,11 +201,17 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
                 </ListItem>
               </ListItemButton>
               <ListItemButton>
-                <ListItem onClick={()=>{setView('result');setOpenState(false)}}>
+                <ListItem onClick={()=>{setView('result');setOpenState(false);}}>
                     <AutoGraphIcon sx={{ color: myTheme.palette.primary.dark }}/>
                     <Typography sx={{ p:1,color: myTheme.palette.primary.dark }}>計算結果</Typography>
                 </ListItem>
               </ListItemButton>
+              <ListItemButton>
+                <ListItem onClick={()=>{setView('result');setOpenState(false);}}>
+                    <AutoGraphIcon sx={{ color: myTheme.palette.primary.dark }}/>
+                    <Typography sx={{ p:1,color: myTheme.palette.primary.dark }}>実験結果</Typography>
+                </ListItem>
+              </ListItemButton>              
             </List>
           </Box>
         </Drawer>
@@ -273,6 +284,16 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
               setNodes={setNodes}
               xmin={0}
               xmax={100}
+              expData={expData.length === 0 ? 
+                (rereadingData!==null ?
+                  // [Object.assign({},{id:0,time:0},...Object.values(rereadingData).filter(key=>key[0]!=='k').map(symbol=>({[symbol]:0.0})))]
+                  [Object.assign({},{id:0,time:0},...nodes.filter(node=>node.type!=='reaction').map(node=>({['['+node.data.symbol+']']:node.data.initial_concentration})))]
+                  :
+                  [{id:0,time:0}]
+                )
+                : 
+                expData}
+              setExpData={setExpData}
             />
             }
           </Grid>

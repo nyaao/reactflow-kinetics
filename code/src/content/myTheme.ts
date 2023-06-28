@@ -68,7 +68,8 @@ export const myTheme=createTheme({
         color:"primary",
         size:"small",
         margin:"dense"
-      }
+      },
+      
     },
     MuiCheckbox:{
       defaultProps:{

@@ -1,11 +1,12 @@
-import { Box, Button, Checkbox, FormControlLabel, FormGroup, Grid, Paper, TextField} from "@mui/material";
+import { Box, Button, Checkbox, FormControlLabel, FormGroup, Grid, Paper, Stack, TextField, Typography} from "@mui/material";
 import { myTheme } from "../myTheme";
 import { GraphResult } from "./GraphResult";
 import { Formulae } from "../Diagram/Formulae";
 import { calc2 } from "../submit"
 import { Node } from 'reactflow';
-import { NumericFormat } from "react-number-format";
-import { useState } from "react";
+import { MouseEvent, useState } from "react";
+import { ExpTable } from "./ExpTable";
+import { ParamControler } from "./ParamControler";
 
 type Props={
   schemeData:{[key:string]:string}|null
@@ -15,17 +16,27 @@ type Props={
   xmin:number,
   xmax:number,
   rereadingData: {[key:string]:string}|null,
-  setCalculateData:(data:{[key: number]: number[]})=>void
+  setCalculateData:(data:{[key: number]: number[]})=>void,
+  expData:{[key:string]:number}[],
+  setExpData:(data:{[key:string]:number}[])=>void
 }
 
 export const ResultMain=(props:Props)=>{
   const [time, setTime] = useState({min:0,max:100});
   const [calculating, setCalculating] = useState(false);
+  const [state, setState] = useState<'param'|'data'>('data');
   const [showGraphFlags, setShowGraphFlags] = useState(props.schemeData!==null ?
     Object.assign({},...Object.keys(props.schemeData).map(key=>({[key]:true})))
     :
     null
     )
+  
+  const [paperSizes, setPaperSizes] = useState([
+    {xs:6,height:"20vh"},
+    {xs:6,height:"20vh"},
+    {xs:1,height:"65vh"},
+    {xs:11,height:"65vh"},
+  ]);
 
   const handleChangeShowGraphFlags=(key:string,value: boolean)=>{
     const newflags = Object.assign({},showGraphFlags,{[key]:value})
@@ -45,57 +56,84 @@ export const ResultMain=(props:Props)=>{
     }
   }
 
+  const handlePaperSizes=(e: MouseEvent<HTMLDivElement, globalThis.MouseEvent>,i:number)=>{
+    if(e.shiftKey===true){
+      if(i===0 && paperSizes[0].xs===6){
+        const newsizes = [
+          {xs:11,height:"65vh"},
+          {xs:1,height:"65vh"},
+          {xs:1,height:"20vh"},
+          {xs:11,height:"20vh"},        
+        ]
+        setPaperSizes(newsizes);
+      }
+      else if(i===1 && paperSizes[0].xs===6){
+        const newsizes = [
+          {xs:5,height:"65vh"},
+          {xs:7,height:"65vh"},
+          {xs:1,height:"20vh"},
+          {xs:11,height:"20vh"},        
+        ]
+        setPaperSizes(newsizes);
+      }
+      else if(i===3 && paperSizes[3].height==="65vh"){
+        const newsizes = [
+          {xs:6,height:"10vh"},
+          {xs:6,height:"10vh"},
+          {xs:1,height:"75vh"},
+          {xs:11,height:"75vh"},        
+        ]
+        setPaperSizes(newsizes);
+      }else{
+        const newsizes = [
+          {xs:6,height:"20vh"},
+          {xs:6,height:"20vh"},
+          {xs:1,height:"65vh"},
+          {xs:11,height:"65vh"},        
+        ]
+        setPaperSizes(newsizes);
+      }
+    }
+  }
+
   return(
     <>
-      <Grid item xs={6}>
-        <Paper>
-          <Box sx={{width:"100%",height:"20vh",overflow:'auto',backgroundColor:myTheme.palette.grey[200],borderRadius:5}}>
+      <Grid item xs={paperSizes[0].xs}>
+        <Paper onDoubleClick={(e)=>handlePaperSizes(e,0)} >
+          <Box sx={{width:"100%",height:paperSizes[0].height,overflow:'auto',backgroundColor:myTheme.palette.grey[200],borderRadius:5}}>
           <Grid container p={2} spacing={1} sx={{display:'flex',justifyContent:'center',alignItems:'top',height:'100%'}}>
-            <Grid item xs={12}>
-              <NumericFormat
-                label={"time_min"}
-                customInput={TextField}
-                value={time.min}
-                onValueChange={(values)=>setTime({min:Number(values.value),max:time.max})}
-                InputLabelProps={{ shrink: true }}
-                style={{paddingRight:8}}
+            {state==='param' &&
+              <ParamControler
+                setState={setState}
+                time={time}
+                setTime={setTime}
+                nodes={props.nodes}
+                setNodes={props.setNodes}
               />
-              <NumericFormat
-                label={"time_max"}
-                customInput={TextField}
-                value={time.max}
-                onValueChange={(values)=>setTime({max:Number(values.value),min:time.min})}
-                InputLabelProps={{ shrink: true }}
-                style={{paddingRight:8}}
+              
+            }
+            {state==='data' &&
+              <ExpTable
+                setState={setState}
+                expData={props.expData.length === 0 ? 
+                  (props.rereadingData!==null ?
+                    [Object.assign({},{id:0,time:0},...Object.values(props.rereadingData).filter(key=>key[0]!=='k').map(symbol=>({[symbol]:0.0})))]
+                    :
+                    [{id:0,time:0}]
+                  )
+                  : 
+                  props.expData}
+                setExpData={props.setExpData}
               />
-            </Grid>
-            <Grid item xs={12}>
-              {props.nodes.filter(n=>n.type=='reaction').map(rn=>{
-                return <NumericFormat
-                  label={rn.id.replace('r','k')}
-                  key={rn.id}
-                  customInput={TextField}
-                  value={rn.data.kinetic_constant}
-                  onValueChange={(values)=>{
-                    const newnodedata = Object.assign({},rn.data,{kinetic_constant:Number(values.value)});
-                    const newnode = Object.assign({},rn,{data:newnodedata});
-                    const newnodes = [...props.nodes.filter(n=>n.id!==rn.id),newnode].sort((a,b)=>Number(a.id.replace('r','')) - Number(b.id.replace('r','')));
-                    props.setNodes(newnodes);
-                  }}
-                  InputLabelProps={{ shrink: true }}
-                  style={{paddingRight:8}}
-                />
-                })
-                }
-            </Grid>
+            }
           </Grid>
           </Box>
         </Paper>
       </Grid>
 
-      <Grid item xs={6}>
-        <Paper>
-          <Box sx={{width:"100%",height:"20vh",overflow:'auto',backgroundColor:myTheme.palette.grey[200],borderRadius:5}}>
+      <Grid item xs={paperSizes[1].xs}>
+        <Paper onDoubleClick={(e)=>handlePaperSizes(e,1)}>
+          <Box sx={{width:"100%",height:paperSizes[1].height,overflow:'auto',backgroundColor:myTheme.palette.grey[200],borderRadius:5}}>
             <Formulae
               rereadingData={props.rereadingData}
               schemeData={props.schemeData}
@@ -104,9 +142,9 @@ export const ResultMain=(props:Props)=>{
         </Paper>
       </Grid>
 
-      <Grid item xs={1}>
-        <Paper>
-          <Box sx={{width:"100%",height:"65vh",overflow:'auto',backgroundColor:myTheme.palette.grey[200],borderRadius:5}}>
+      <Grid item xs={paperSizes[2].xs}>
+        <Paper onDoubleClick={(e)=>handlePaperSizes(e,2)}>
+          <Box sx={{width:"100%",height:paperSizes[2].height,overflow:'auto',backgroundColor:myTheme.palette.grey[200],borderRadius:5}}>
             <Grid container p={1} direction={'column'}>
 
               <Grid item xs={12}>
@@ -126,9 +164,10 @@ export const ResultMain=(props:Props)=>{
           </Box>
         </Paper>
       </Grid>  
-      <Grid item xs={11}>
-        <Paper>
-          <Box sx={{width:"100%",height:"65vh",overflow:'auto',backgroundColor:myTheme.palette.grey[200],borderRadius:5}}>
+
+      <Grid item xs={paperSizes[3].xs}>
+        <Paper onDoubleClick={(e)=>handlePaperSizes(e,3)}>
+          <Box sx={{width:"100%",height:paperSizes[3].height,overflow:'auto',backgroundColor:myTheme.palette.grey[200],borderRadius:5}}>
             <Button fullWidth style={{backgroundColor:myTheme.palette.primary.light}} disabled={calculating}
               onClick={()=>{
               setCalculating(true);
@@ -140,10 +179,13 @@ export const ResultMain=(props:Props)=>{
               nodes={props.nodes}
               xmin={time.min}
               xmax={time.max}
+              expData={props.expData}
+              rereadingData={props.rereadingData}
             />
           </Box>
         </Paper>
       </Grid>
+
     </>
   )
 }

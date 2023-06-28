@@ -72,7 +72,6 @@ export const NodeDialog=(props:Props)=>{
     .filter((key)=>key!=='label')
     .filter((key)=>tmpNode.data[key]===tmpNode.data.label)
     // labelにセットされている場合は、labelも書き換える
-
     const labeldata = {label:labelkey[0]===k? e.target.value : tmpNode.data.label}
     const newtmpnode = Object.assign({},
       tmpNode,
