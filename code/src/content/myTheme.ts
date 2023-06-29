@@ -36,6 +36,7 @@ export const myTheme=createTheme({
       styleOverrides: `
       ::-webkit-scrollbar{
           width: 10px;
+          height: 10px;
       },
       ::-webkit-scrollbar-thumb {
           background-color: #BCBABE;
@@ -44,9 +45,10 @@ export const myTheme=createTheme({
       ::-webkit-scrollbar-track {
         margin-top: 10px;
         margin-bottom: 10px;
+        margin-left: 10px;
+        margin-right: 10px;
         background-color: #EEEEEE;
         border-radius: 10px;
-     
       }
       `
     },
@@ -66,7 +68,8 @@ export const myTheme=createTheme({
         color:"primary",
         size:"small",
         margin:"dense"
-      }
+      },
+      
     },
     MuiCheckbox:{
       defaultProps:{

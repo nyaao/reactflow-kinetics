@@ -25,9 +25,9 @@ export const Formulae=(props:Props)=>{
   return (
     <Grid container sx={{p:1,display:'flex',justifyContent:'center',alignItems:'center',height:'100%'}}>
       <Grid item xs={12}>
-        <Typography sx={{fontSize:20,textAlign:'center',color:myTheme.palette.primary.dark}}>        
+        {/* <Typography sx={{fontSize:20,textAlign:'center',color:myTheme.palette.primary.dark}}>        
           【反応速度式】
-        </Typography>
+        </Typography> */}
         <Box sx={{p:1}}>
         <MathJaxContext>
           {props.schemeData!==null && 

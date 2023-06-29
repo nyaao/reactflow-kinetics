@@ -5,7 +5,7 @@ import React from "react";
 import { createBackgroundNodeParams, setRId,setMId } from "../default";
 import { getMaxFromArray } from "../utils";
 
-export const ExportExcel=async(e:{ preventDefault: () => void; },NODES:Node[],EDGES:Edge[])=>{
+export const ExportExcel=async(e:{ preventDefault: () => void; },NODES:Node[],EDGES:Edge[],SCHEMEDATA:{[key:string]:string}|null)=>{
   e.preventDefault()
 
   const workbook = new ExcelJS.Workbook();
@@ -13,10 +13,12 @@ export const ExportExcel=async(e:{ preventDefault: () => void; },NODES:Node[],ED
   workbook.addWorksheet('nodedata');
   workbook.addWorksheet('edge');
   workbook.addWorksheet('edgedata');
+  workbook.addWorksheet('schemedata');
   const nodesheet = workbook.getWorksheet("node");
   const nodedatasheet = workbook.getWorksheet("nodedata");
   const edgesheet = workbook.getWorksheet("edge");
   const edgedatasheet = workbook.getWorksheet("edgedata");
+  const schemedatasheet = workbook.getWorksheet("schemedata");
 
   nodesheet.columns = ["id","type","position"].map((v)=>(
     {header:v.toUpperCase(),key:v}
@@ -66,6 +68,7 @@ export const ExportExcel=async(e:{ preventDefault: () => void; },NODES:Node[],ED
       }
     ))
   );
+
   edgedatasheet.columns = [
     {header:"ID",key:"id"},
     ...Object.keys(EDGES[0].data).map((k)=>(
@@ -82,6 +85,15 @@ export const ExportExcel=async(e:{ preventDefault: () => void; },NODES:Node[],ED
       )
     ))
   );
+
+  schemedatasheet.columns = [{"header":"INTEGRAND", "key":"integrand"},{"header":"SCHEME","key":"scheme"}];
+  if(SCHEMEDATA!==null){
+    schemedatasheet.addRows(
+      Object.keys(SCHEMEDATA).map((integ)=>(
+        {integrand:integ,scheme:SCHEMEDATA[integ]}                
+      ))
+    );
+  }
 
   const uint8Array = await workbook.xlsx.writeBuffer();
   const blob = new Blob([uint8Array], { type: "application/octet-binary" });
@@ -157,13 +169,23 @@ export const LoadExcelData=async(data: ExcelJS.Buffer)=>{
     }
   ))
 
+  //Schemeデータの読込
+  const schemesheet = workbook.getWorksheet('schemedata');
+  const schemetags = schemesheet.getRow(1).values as CellValue[];
+  const schemeinfo = Object.assign({},
+  ...schemetags.map((tag,i)=>(
+    {[String(tag)]:schemesheet.getColumn(i).values.map((data)=>(data)).slice(2)}
+  ))
+  );
+
   return {newnodes:newnodes,newedges:newedges}
 }
 
 export const ImportExcel=(
   EVENT:ChangeEvent<HTMLInputElement>,
-  SETNODES:(value: React.SetStateAction<Node<any, string | undefined>[]>) => void,
+  SETNODES:(value: React.SetStateAction<Node<any>[]>) => void,
   SETEDGES:(value: React.SetStateAction<Edge<any>[]>) => void,
+  HANDLE:(nodes:Node[],edges:Edge[])=> Promise<void>
   )=>{
   if(EVENT.target.files!==null){
     const blobURL = window.URL.createObjectURL(EVENT.target.files[0]);
@@ -179,6 +201,7 @@ export const ImportExcel=(
         setMId(getMaxFromArray(nodeMIdArray)+1);
         SETNODES(res["newnodes"]);
         SETEDGES(res["newedges"]);
+        HANDLE(res["newnodes"],res["newedges"]);
         });
       };
     xhr.responseType = "arraybuffer";

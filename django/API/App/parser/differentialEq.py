@@ -63,10 +63,12 @@ def lambda_handler(event, context):
     expressions = event["body"]["scheme"]
     init_y = event["body"]["init_y"]
     org_params = event["body"]["params"]
+    time = event["body"]["time"]
 
     print(init_y)
     print(expressions)
     print(org_params)
+    print(time)
 
     """
     init_y = sorted({k.replace('Y',''):init_y[k] for k in tmpkeys}.items()) #init_yをキーでソート
@@ -114,7 +116,7 @@ def lambda_handler(event, context):
     # expressions = [re.sub('^\+','',expression) for expression in scheme.values()]
     # print(expressions)
 
-    time_ = np.linspace(0,100,101)
+    time_ = np.linspace(time["min"],time["max"],1000+1)
     def funcEq(T, Y, PARAMS):
         parser = MyTransformer.EquationParser(PARAMS,Y) # parseする前に各ステップにおけるYを格納する必要があるため、ここでパーサーをインスタンス化する必要がある
         ret = [parser.parse(expr) for expr in expressions_input]
