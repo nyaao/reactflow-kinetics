@@ -13,6 +13,7 @@ import { ResultMain } from "./Results/ResultMain";
 import { calc, calc2 } from "./submit";
 import { Node,Edge, useEdgesState, useNodesState } from "reactflow";
 import { ExportExcel, ImportExcel } from "./FileHandler/FileHandler";
+import { ExpTableMain } from "./ExpTable/ExpTableMain";
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
     open?: boolean;
@@ -35,7 +36,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
   
   export function AppMain() {
     const [isOpen, setOpenState] = useState<boolean>(false);
-    const [view, setView] = useState<'diagram'|'result'>('diagram');
+    const [view, setView] = useState<'diagram'|'result'|'exptable'>('diagram');
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const inputRef = useRef<HTMLInputElement>(null);
@@ -207,7 +208,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
                 </ListItem>
               </ListItemButton>
               <ListItemButton>
-                <ListItem onClick={()=>{setView('result');setOpenState(false);}}>
+                <ListItem onClick={()=>{setView('exptable');setOpenState(false);}}>
                     <AutoGraphIcon sx={{ color: myTheme.palette.primary.dark }}/>
                     <Typography sx={{ p:1,color: myTheme.palette.primary.dark }}>実験結果</Typography>
                 </ListItem>
@@ -288,6 +289,19 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
                 (rereadingData!==null ?
                   // [Object.assign({},{id:0,time:0},...Object.values(rereadingData).filter(key=>key[0]!=='k').map(symbol=>({[symbol]:0.0})))]
                   [Object.assign({},{id:0,time:0},...nodes.filter(node=>node.type!=='reaction').map(node=>({['['+node.data.symbol+']']:node.data.initial_concentration})))]
+                  :
+                  [{id:0,time:0}]
+                )
+                : 
+                expData}
+              setExpData={setExpData}
+            />
+            }
+            {view === "exptable" &&
+            <ExpTableMain
+              expData={expData.length === 0 ? 
+                (rereadingData!==null ?
+                  [Object.assign({},{id:0,time:0},...Object.values(rereadingData).filter(key=>key[0]!=='k').map(symbol=>({[symbol]:0.0})))]
                   :
                   [{id:0,time:0}]
                 )
