@@ -2,21 +2,27 @@ import * as React from 'react';
 import { Button, Grid } from '@mui/material';
 import { DataGrid,  GridActionsCellItem, GridColDef, GridRowParams,} from '@mui/x-data-grid';
 import { myTheme } from '../myTheme';
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState,ChangeEvent} from 'react';
 import EditIcon from "@mui/icons-material/Edit";
 import RemoveIcon from '@mui/icons-material/Remove';
 import AddIcon from '@mui/icons-material/Add';
 import { ExpDataDialog } from '../Diagram/ExpDataDialog';
+import { LoadExcelData } from '../FileHandler/ExpDataFileHandler';
 
 type Props = {
   expData:{[symbol:string]:number}[],
   setExpData:(data:{[symbol:string]:number}[])=>void,
+  handleExpDataImport:(e:ChangeEvent<HTMLInputElement>)=>void
 }
     //expData
     //[{id:0,time:0.0, '[A]':0.3, '[B]':0.0}]
 
 export const ExpTableMain=(props:Props)=>{
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const inputRef = useRef<HTMLInputElement>(null);  
   const [editingRow, setEditingRow] = useState<{[key:string]:number}|null>(null);
+
  
   // React.useEffect(()=>{
   //   console.log(props.expData);
@@ -100,10 +106,25 @@ export const ExpTableMain=(props:Props)=>{
     [props.expData]
   )
 
+  const fileUpload=()=>{
+    inputRef.current!==null && inputRef.current.click();
+  }
+
   return (
     <>
         <Button disableElevation onClick={()=>console.log(props.expData)} size="small" variant='outlined' sx={{margin:'2px', color:myTheme.palette.grey[400],borderColor:myTheme.palette.grey[400]}}>debug</Button>
-        <Button disableElevation onClick={()=>console.log(props.expData)} size="small" variant='outlined' sx={{margin:'2px', color:myTheme.palette.grey[400],borderColor:myTheme.palette.grey[400]}}>import</Button>
+        <Button disableElevation onClick={fileUpload} size="small" variant='outlined' sx={{margin:'2px', color:myTheme.palette.grey[400],borderColor:myTheme.palette.grey[400]}}>import              
+          <input
+            type="file"
+            hidden
+            ref={inputRef}
+            onChange={(e: ChangeEvent<HTMLInputElement>) => {
+              e.target.files && props.handleExpDataImport(e); 
+              setAnchorEl(null);
+              console.log(e.target.files);
+            }}
+          />
+        </Button>
         <Button disableElevation onClick={()=>console.log(props.expData)} size="small" variant='outlined' sx={{margin:'2px', color:myTheme.palette.grey[400],borderColor:myTheme.palette.grey[400]}}>export</Button>
 
       <Grid item xs={12}>  

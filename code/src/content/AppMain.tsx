@@ -13,7 +13,9 @@ import { ResultMain } from "./Results/ResultMain";
 import { calc, calc2 } from "./submit";
 import { Node,Edge, useEdgesState, useNodesState } from "reactflow";
 import { ExportExcel, ImportExcel } from "./FileHandler/FileHandler";
+import { ImportExpDataExcel } from "./FileHandler/ExpDataFileHandler";
 import { ExpTableMain } from "./ExpTable/ExpTableMain";
+
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
     open?: boolean;
@@ -73,6 +75,10 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
     const handleExport=useCallback((e:{ preventDefault: () => void; })=>{
       ExportExcel(e,nodes,edges,schemeData);
     },[edges, nodes, schemeData]);
+
+    const handleExpDataImport = useCallback((e:ChangeEvent<HTMLInputElement>) => {
+      ImportExpDataExcel(e);
+    },[]);    
     
     const handleShowDerivative=async(NODES?:Node[],EDGES?:Edge[])=>{
       const tmpnodes = NODES===undefined ? nodes : NODES
@@ -308,6 +314,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
                 : 
                 expData}
               setExpData={setExpData}
+              handleExpDataImport={handleExpDataImport}
             />
             }
           </Grid>
