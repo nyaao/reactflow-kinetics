@@ -1,0 +1,6 @@
+@startuml setting
+!theme cerulean-outline
+!define props {field} <<Props>>
+!define state {field} <<State>>
+!define ref {field} <<Ref>>
+@endtuml

@@ -1,0 +1,11 @@
+@startuml Formulae
+!include ../settings.pu
+
+class Formulae {
+  props schemeData:{[key:string]:string}|null
+  props rereadingData:{[key:string]:string}|null
+  ---
+  + handleRereading(s:string, rereading:{[k:string]:string}) => String
+  + render(): JSX
+}
+@enduml

@@ -1,0 +1,10 @@
+@startuml submit
+!include settings.pu
+
+package submit[
+  ---
+  calc=async(nodes:Node[],edges:Edge[])
+  calc2=async(SCHEMEDATA:{[key:string]:string},INITY:{[key:string]:number},PARAMS:{[key:string]:number},time:{min:number,max:number})
+]
+
+@enduml

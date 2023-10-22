@@ -1,0 +1,36 @@
+@startuml GraphResult
+!include ../settings.pu
+
+class GraphResult {
+  props integrand:string[]
+  props calculatedData:{ [key: number]: number[]}
+  props nodes:Node[]
+  props xmin:number
+  props xmax:number
+  props expData:{[key:string]:number}[]
+  props rereadingData: {[key:string]:string}|null
+  ....
+  state [editingRow, setEditingRow] = useState<{[key:string]:number}|null>(null)
+  ....
+  - colors: string[]
+  - time: string[]
+  - rowdata: number[][]
+  - mids: number[]
+  - data_selected: number[][]
+  - calc_data: {x: number,y: number}[][]
+  - time_exp: number[]
+  - selected_key: string[]
+  - show_key: string[]
+  - exp_data: {x: number,y: number}[][]
+  - label: string[]
+  - symbols: any[]
+  - graphData:{datasets: 
+                {label: anydata: {x: numbery: number}[],
+                borderColor: string, 
+                radius: number,
+                showLine: boolean}[]}
+  - options: ChartOptions<'line'>
+  ---
+  render(): JSX
+}
+@enduml

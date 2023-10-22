@@ -1,0 +1,19 @@
+@startuml ProductNode
+!include ../../settings.pu
+
+class ProductNode {
+  props NodeProps
+  render(): JSX
+}
+
+class Item{
+  styled(Paper)
+}
+
+ProductNode --|> Item
+note right
+    This is a standalone function.
+    It is not a part of any class.
+end note
+
+@enduml

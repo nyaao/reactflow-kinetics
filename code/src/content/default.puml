@@ -1,0 +1,29 @@
+@startuml default
+!include settings.pu
+
+package default[
+  rid: number
+  getRId()
+  setRId(newid:number)
+  ....
+  mid: number
+  getMId()
+  setMId(newid:number)
+  ....
+  <<interface>> nodeDataTypes{[key:string]:number|string|boolean}
+  NodeTypes:{
+    reaction: ({ selected, data, }: NodeProps) => JSX.Element;
+    reactant: ({ selected, data, }: NodeProps) => JSX.Element;
+    product: ({ selected, data, }: NodeProps) => JSX.Element,
+    intermediate: ({ selected, data, }: NodeProps) => JSX.Element;}
+  nodeDataDefault:nodeDataTypes
+  createBackgroundNodeParams(src:string|undefined)
+  createDefaultNodeParams(type:string,position:any)
+  ....
+  <<interface>> edgeDataTypes{[key:string]:number|string}
+  EdgeTypes{}
+  edgeDataDefault:edgeDataTypes
+  createDefaultEdgeParams(source:string,sourcehandle:string,target:string,targethandle:string)
+]
+
+@enduml

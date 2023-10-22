@@ -12,7 +12,6 @@ import { LoadExcelData } from '../FileHandler/ExpDataFileHandler';
 type Props = {
   expData:{[symbol:string]:number}[],
   setExpData:(data:{[symbol:string]:number}[])=>void,
-  handleExpDataImport:(e:ChangeEvent<HTMLInputElement>)=>void
 }
     //expData
     //[{id:0,time:0.0, '[A]':0.3, '[B]':0.0}]
@@ -113,20 +112,6 @@ export const ExpTableMain=(props:Props)=>{
   return (
     <>
         <Button disableElevation onClick={()=>console.log(props.expData)} size="small" variant='outlined' sx={{margin:'2px', color:myTheme.palette.grey[400],borderColor:myTheme.palette.grey[400]}}>debug</Button>
-        <Button disableElevation onClick={fileUpload} size="small" variant='outlined' sx={{margin:'2px', color:myTheme.palette.grey[400],borderColor:myTheme.palette.grey[400]}}>import              
-          <input
-            type="file"
-            hidden
-            ref={inputRef}
-            onChange={(e: ChangeEvent<HTMLInputElement>) => {
-              e.target.files && props.handleExpDataImport(e); 
-              setAnchorEl(null);
-              console.log(e.target.files);
-            }}
-          />
-        </Button>
-        <Button disableElevation onClick={()=>console.log(props.expData)} size="small" variant='outlined' sx={{margin:'2px', color:myTheme.palette.grey[400],borderColor:myTheme.palette.grey[400]}}>export</Button>
-
       <Grid item xs={12}>  
         <DataGrid
           rows={props.expData}

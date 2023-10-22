@@ -1,0 +1,14 @@
+@startuml SchemeDialog
+!include ../../settings.pu
+
+class SchemeDialog {
+  props open: boolean
+  props onClose: () => void
+  props schemedata:{[key:string]:string}|null
+  props rereadingdata:{[key:string]:string}|null
+  ---
+  handleClose=(v:string)
+  handleRereading=(s:string, rereading:{[k:string]:string})
+  render(): JSX
+}
+@enduml

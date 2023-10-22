@@ -1,0 +1,29 @@
+@startuml FlowMain
+!include ../settings.pu
+
+class FlowMain {
+  props nodes: Node<any, string | undefined>[]
+  props setNodes: React.Dispatch<React.SetStateAction<Node<any, string | undefined>[]>>
+  props onNodesChange: OnNodesChange
+  props edges: Edge<any>[]
+  props setEdges: React.Dispatch<React.SetStateAction<Edge<any>[]>>
+  props onEdgesChange: OnEdgesChange
+  props handleShowDerivative:(NODES:Node[],EDGES:Edge[])=>void
+  ....
+  ref reactFlowWrapper = useRef<HTMLDivElement|null>(null);
+  state [reactFlowInstance, setReactFlowInstance] = useState<any|null>(null);
+  state [doubleClickedNode, setDoubleClickedNode] = useState<Node|null>(null);
+  state [doubleClickedEdge, setDoubleClickedEdge] = useState<Edge|null>(null);
+  ---
+  onConnect = useCallback((params: Edge<any> | Connection) => void
+  onEdgeUpdate = useCallback((oldEdge: Edge<any>, newConnection: Connection) => void
+  onDragOver = useCallback((event: { preventDefault: () => void; dataTransfer: { dropEffect: string; }; }) =>
+  onDrop = useCallback((event:{preventDefault:()=>void; dataTransfer:{getData:(arg0:string)=>any;}; clientX:number; clientY: number;}) =>
+  handleNodeDoubleClick=useCallback((e: React.MouseEvent<Element, MouseEvent>,node: Node<any>)=>void
+  handleNodeDialogClose=useCallback((node?:Node)=>void
+  handleEdgeDoubleClick=useCallback((e: React.MouseEvent<Element, MouseEvent>,edge: Edge<any>)=>void
+  handleEdgeDialogClose=useCallback((edge?:Edge)=>void
+  const handleImportBG = React.useCallback((e:React.ChangeEvent<HTMLInputElement>) => void
+  render(): JSX
+}
+@enduml

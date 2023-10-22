@@ -1,0 +1,15 @@
+@startuml ExpDataDialog
+!include ../settings.pu
+
+class ExpDataDialog {
+  props open: boolean 
+  props onClose: (newrow?: {[key:string]:number}) => void 
+  props editingrow:{[key:string]:number}
+  ....
+  state [tmpRow, setTmpRow] = useState<{[key:string]:number}>(props.editingrow)
+  ---
+  + handleOnValueChange=(values: NumberFormatValues,k: string) => void
+  + handleRereading(s:string, rereading:{[k:string]:string}) => void
+  + render(): JSX
+}
+@enduml

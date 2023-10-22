@@ -1,0 +1,13 @@
+@startuml PipeEdge
+!include ../../settings.pu
+
+class PipeEdge {
+  props EdgeProps
+  ....
+  - style_selected = {strokeWidth:3,stroke:"#FF3333",}
+  - style_notselected = {strokeWidth:3,stroke:"#AAAA77",}
+  - [edgePath, labelX, labelY]  
+  ---
+  render(): JSX
+}
+@enduml

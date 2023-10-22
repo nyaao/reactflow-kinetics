@@ -1,0 +1,24 @@
+@startuml MyAppBar
+!include settings.pu
+
+class MyAppBar {
+  props handleImport:(e: ChangeEvent<HTMLInputElement>)=>void
+  props handleExport:(e:{ preventDefault: () => void; })=>void
+  props handleImportBG:(e: ChangeEvent<HTMLInputElement>)=>void
+  props setView:(view:"reactflow"|"scheme"|"graph"|"table")=>void
+  props handleShowDerivative:()=>void
+  props handleSolveDerivative:()=>void
+  ....
+  state [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  ref inputRef = useRef<HTMLInputElement>(null);
+  ref inputBGRef = useRef<HTMLInputElement>(null);  
+  ....
+  - open = Boolean(anchorEl);
+  ---
+  handleClose = ()
+  handleClickListItem = (event: React.MouseEvent<HTMLElement>)
+  fileUpload=()
+  bgfileUpload=()
+  render(): JSX
+}
+@enduml

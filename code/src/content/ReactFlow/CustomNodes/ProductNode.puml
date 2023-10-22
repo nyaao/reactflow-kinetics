@@ -1,0 +1,19 @@
+@startuml IntermediateNode
+!include ../../settings.pu
+
+class IntermediateNode {
+  props NodeProps
+  render(): JSX
+}
+
+class Item{
+  styled(Paper)
+}
+
+IntermediateNode --|> Item
+note right
+    This is a standalone function.
+    It is not a part of any class.
+end note
+
+@enduml

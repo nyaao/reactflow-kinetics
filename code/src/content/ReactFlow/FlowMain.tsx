@@ -77,6 +77,13 @@ export default function FlowMain(props:Props){
     {
       const newnode = getNewNode(event,reactFlowWrapper,reactFlowInstance,props.nodes);
       newnode!==undefined && props.setNodes((nds) => nds.concat(newnode))
+
+      // nodeが追加されたときにmaterial nodeを取得
+      if(newnode!==undefined){
+        const mnodes = props.nodes.concat(newnode).filter((node)=>(node.id.indexOf('m')!==-1))
+        const mnodesID = mnodes.map(node=>node.id)
+        console.log(mnodesID)
+      }
     },
     [reactFlowInstance, props.nodes, props.setNodes]
   );

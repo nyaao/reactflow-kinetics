@@ -14,6 +14,7 @@ export const ExportExcel=async(e:{ preventDefault: () => void; },NODES:Node[],ED
   workbook.addWorksheet('edge');
   workbook.addWorksheet('edgedata');
   workbook.addWorksheet('schemedata');
+  workbook.addWorksheet('expdata');
   const nodesheet = workbook.getWorksheet("node");
   const nodedatasheet = workbook.getWorksheet("nodedata");
   const edgesheet = workbook.getWorksheet("edge");

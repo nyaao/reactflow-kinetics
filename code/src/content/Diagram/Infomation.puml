@@ -1,0 +1,12 @@
+@startuml Infomation
+!include ../settings.pu
+
+class Infomation {
+  props schemeData:{[key:string]:string}|null
+  props rereadingData:{[key:string]:string}|null
+  props identifier:string
+  ---
+  + handleRereading(s:string, rereading:{[k:string]:string}) => String
+  + render(): JSX
+}
+@enduml

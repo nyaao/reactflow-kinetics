@@ -1,0 +1,11 @@
+@startuml ResultMain
+!include ../settings.pu
+
+class ResultMain {
+  props schemedata:{[key:string]:string}|null,
+  props rereadingdata:{[key:string]:string}|null,
+  ---
+  handleRereading=(s:string, rereading:{[k:string]:string})
+  render(): JSX
+}
+@enduml

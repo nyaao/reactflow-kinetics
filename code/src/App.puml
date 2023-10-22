@@ -1,0 +1,28 @@
+@startuml MyAppBar
+!include content/settings.pu
+!include content/AppMain.puml
+
+' !include content/ReactFlow/FlowMain.puml
+!include content/Results/ResultMain.puml
+!include content/ExpTable/ExpTableMain.puml
+
+class App
+
+package "Diagram" {
+    class FlowMain
+    class Formulae
+    class Infomation
+    !include content/ReactFlow/FlowMain.puml
+    !include content/Diagram/Formulae.puml
+    !include content/Diagram/Infomation.puml
+}
+
+App *-- AppMain
+AppMain *-- FlowMain
+AppMain "1" *-- "0.." Infomation
+AppMain *-- Formulae
+AppMain *-- ResultMain
+AppMain *-- ExpTableMain
+
+
+@enduml

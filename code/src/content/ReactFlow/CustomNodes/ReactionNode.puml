@@ -1,0 +1,19 @@
+@startuml ReactionNode
+!include ../../settings.pu
+
+class ReactionNode {
+  props NodeProps
+  render(): JSX
+}
+
+class Item{
+  styled(Paper)
+}
+
+ReactionNode --|> Item
+note right
+    This is a standalone function.
+    It is not a part of any class.
+end note
+
+@enduml

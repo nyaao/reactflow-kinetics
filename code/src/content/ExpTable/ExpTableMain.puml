@@ -1,0 +1,22 @@
+@startuml ExpTableMain
+!include ../settings.pu
+
+class ExpTableMain {
+  props expData:{[symbol:string]:number}[]
+  props setExpData:(data:{[symbol:string]:number}[])=>void
+  props handleExpDataImport:(e:ChangeEvent<HTMLInputElement>)=>void
+  ....
+  state [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  state const open = Boolean(anchorEl)
+  state [editingRow, setEditingRow] = useState<{[key:string]:number}|null>(null)
+  ref inputRef = useRef<HTMLInputElement>(null)
+  ....
+  - columns: GridColDef[]
+  ---
+  + handleAddRow=(id:number) => void
+  + handleDelRow=(id:number) => void
+  + handleExpDataDialogClose=useCallback((data?:{[key:string]:number}) => void
+  + fileUpload=() => void
+  + render(): JSX
+}
+@enduml

@@ -47,7 +47,9 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
     const [schemeData, setSchemeData] = useState<{[key:string]:string}|null>(null);
     const [rereadingData, setRereadingData] = useState<{[key:string]:string}|null>(null);
     const [calculatedData, setCalculatedData] = useState<{[key:number]:number[]}>({});
-    const [expData, setExpData] = useState<{[key:string]:number}[]>([]);
+    const [expData, setExpData] = useState<{[key:string]:number}[]>([
+      {id:0, time:0.0, '[A]':1.2, '[B]':0.1}
+    ]);
     //expData
     //[{id:0, time:0.0, '[A]':0.3, '[B]':0.0}]
 
@@ -74,11 +76,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
   
     const handleExport=useCallback((e:{ preventDefault: () => void; })=>{
       ExportExcel(e,nodes,edges,schemeData);
-    },[edges, nodes, schemeData]);
-
-    const handleExpDataImport = useCallback((e:ChangeEvent<HTMLInputElement>) => {
-      ImportExpDataExcel(e);
-    },[]);    
+    },[edges, nodes, schemeData]);   
     
     const handleShowDerivative=async(NODES?:Node[],EDGES?:Edge[])=>{
       const tmpnodes = NODES===undefined ? nodes : NODES
@@ -148,6 +146,7 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
                 console.log("edges",edges)
                 console.log("schemeData",schemeData)
                 console.log("rereadingData",rereadingData)
+                console.log("expData",expData)
                 }}>debug</Button>
             </Toolbar>
           </AppBar>
@@ -314,7 +313,6 @@ const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
                 : 
                 expData}
               setExpData={setExpData}
-              handleExpDataImport={handleExpDataImport}
             />
             }
           </Grid>

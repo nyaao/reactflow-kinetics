@@ -1,0 +1,13 @@
+@startuml PipeEdge
+!include ../../settings.pu
+
+class PipeEdge {
+  props EdgeProps
+  ....
+  - [edgePath, labelX, labelY]  
+  - foreignObjectSize
+  ---
+  onEdgeClick = (evt: React.MouseEvent<HTMLButtonElement, MouseEvent>, id: any)
+  render(): JSX
+}
+@enduml

@@ -1,0 +1,13 @@
+@startuml EdgeDisplayAccPanel
+!include ../../../settings.pu
+
+class EdgeDisplayAccPanel {
+  props name:string
+  props expanded:boolean
+  props handleChange:(panel: string) => (event: React.SyntheticEvent, isExpanded: boolean)=>void
+  props Edges:Edge[]
+  props setEdges:(Edges:Edge[])=>void
+  ---
+  render(): JSX
+}
+@enduml
