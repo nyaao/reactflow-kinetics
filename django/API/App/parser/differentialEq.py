@@ -2,61 +2,10 @@ from scipy.integrate import solve_ivp
 import numpy as np
 from . import MyTransformer
 # import MyTransfomer
+import sympy
 import sys
 import optuna
 import re
-
-class DiffEqOptTool():
-
-    def __init__(self,FUNC,NUMPARAMS,TIME,INITY) -> None:
-        self.diff_func = FUNC
-        self.time_=TIME
-        self.init_y=INITY
-        self.num_params=NUMPARAMS
-
-    def solveDiffEq(self,K):
-        # ソルバーの設定
-        solver = solve_ivp(self.diff_func,[self.time_[0],self.time_[-1]],self.init_y,args=(K,),dense_output=True)
-
-        # 微分方程式を解いて辞書変数に格納
-        sol = list(solver.sol(self.time_))
-        sols = zip(*sol)
-        rdic = dict(zip(self.time_,sols))
-        return rdic
-    
-    def searchNearestKey(self,ORGKEY,CANDKEYS):
-        min_err = sys.float_info.max
-        nearest_key = 0
-        for ck in CANDKEYS:
-            err = (ck - ORGKEY) ** 2 
-            if err < min_err:
-                min_err = err
-                nearest_key = ck
-        return nearest_key
-
-    def calcError(self,EXDATA,CALCDATA):    
-        # 実験データとの誤差を集計
-        sum_err = 0
-        for exk in EXDATA.keys():
-            if exk in CALCDATA.keys():
-                tmpkey = exk
-            else:
-                tmpkey = self.searchNearestKey(exk,CALCDATA.keys())
-            for yi in range(len(self.init_y)):
-                sum_err += (EXDATA[exk][yi] - CALCDATA[tmpkey][yi]) ** 2
-        return sum_err
-
-    def runOptuna(self,EXDATA,PRANGE,NTRIAL=100):
-        def objective(trial):
-            params = []
-            for i in range(self.num_params):
-                params.append(trial.suggest_float("params"+str(i),PRANGE[i][0],PRANGE[i][1]))
-            calc_data_dic = self.solveDiffEq(params)
-            return self.calcError(EXDATA,calc_data_dic)
-
-        study = optuna.create_study()
-        study.optimize(objective,n_trials=NTRIAL)
-        return list(study.best_params.values())
 
 def lambda_handler(event, context):
     #データ格納
@@ -65,23 +14,16 @@ def lambda_handler(event, context):
     org_params = event["body"]["params"]
     time = event["body"]["time"]
 
-    print(init_y)
-    print(expressions)
-    print(org_params)
-    print(time)
+    print("---------------受信データ確認----------------------------------------------")
+    print('【init_y】',init_y)
+    print('【expressions】', expressions)
+    print('【org_params】', org_params)
+    print('【time】', time)
 
-    """
-    init_y = sorted({k.replace('Y',''):init_y[k] for k in tmpkeys}.items()) #init_yをキーでソート
-    init_y = [y[1] for y in init_y] #ソートした結果をリストに格納
-    expressions = sorted({k.replace('Y',''):scheme[k] for k in tmpkeys}.items()) #schemeをキーでソート
-    expressions = [re.sub('^\+','',expression[1]) for expression in expressions]
-    params = sorted({k.replace('k',''):params[k] for k in params.keys()}.items()) #paramsをキーでソート
-    org_params = [k[1] for k in params] #ソートした結果をリストに格納
-    """
-    
+    print("-------------計算用inputデータ確認-----------------------------------------")
+
     Yindex_max = max([int(yi.replace("Y[","").replace("]","")) for yi in init_y.keys()])
     init_y_input=[]
-    
     for yi in range(Yindex_max+1):
         try:
             init_y_input.append(init_y['Y['+str(yi)+']'])
@@ -104,47 +46,78 @@ def lambda_handler(event, context):
         except:
             org_params_input.append(0)
 
-    print("-----------------------------------------")
-
-    print(init_y_input)
-    print(expressions_input)    
-    print(org_params_input)
+    print('【init_y_input】',init_y_input)
+    print('【expressions_input】', expressions_input)    
+    print('【org_params_input】', org_params_input)
     
-    # init_y = [100,100,0]
-    # org_params = [0.1]
-    # print(rereading)
-    # expressions = [re.sub('^\+','',expression) for expression in scheme.values()]
-    # print(expressions)
+    print('-----------------sympy+scipyの処理-----------------------------------------')
+    def calcby_sympy(params):
+        k=params[1:]
+        init_y = init_y_input[1:]
+        input_strs = expressions_input[1:]
 
-    time_ = np.linspace(time["min"],time["max"],1000+1)
-    def funcEq(T, Y, PARAMS):
-        parser = MyTransformer.EquationParser(PARAMS,Y) # parseする前に各ステップにおけるYを格納する必要があるため、ここでパーサーをインスタンス化する必要がある
-        ret = [parser.parse(expr) for expr in expressions_input]
-        return ret
+        k_num = len(k)
+        Y_num = len(init_y)
+        k_symbols = ([sympy.Symbol('k'+str(i+1)) for i in range(k_num)])
+        Y_symbols = ([sympy.Symbol('Y'+str(i+1)) for i in range(Y_num)])
+        equation_strs = [re.sub(r'(\w)\[(\d+)\]', r'\1\2', instr) for instr in input_strs] # '[',']'がsympyでうまく処理できないので除去
+        symbolic_exprs = [sympy.sympify(eqstr) for eqstr in equation_strs]
+        numpy_exprs = [sympy.lambdify((*k_symbols, *Y_symbols),symbexpr,'numpy') for symbexpr in symbolic_exprs]
+
+        def ode_func(t, x):
+            return [np_expr(*k,*x) for np_expr in numpy_exprs]
+
+        time_ = np.linspace(time["min"],time["max"],1000+1)
+        solver = solve_ivp(ode_func, [time_[0],time_[-1]], init_y, method='RK45',dense_output=True)
+        
+        sol = list(solver.sol(time_))
+        sols = zip(*sol)
+        calc_results = dict(zip(time_,sols))
+        updated_calc_results = {key: (0.0, *values) for key, values in calc_results.items()}
+        return updated_calc_results
+    calc_results = calcby_sympy(org_params_input)
+
+    print("--------------受信データ確認(実験データ)-----------------------------------")
+    exp_data = event["body"]["expData"]
+    selected_data = event["body"]["selectedData"]
+    exp_times = [data['time'] for data in event["body"]["expData"]]
+    print('【exp_data】',exp_data)
+    print('【selected_data】',selected_data)
+    print('【exp_times】',exp_times)
+
+    print("--------------optunaによるパラメータフィッティング-------------------------")
+    opt_param = event["body"]["optParam"]
+    print('【opt_param】',opt_param)
+
+    if opt_param!={}:
+        def objective(trial):
+            def calc_error():
+                selected_key_index = [(key,int(key.replace('Y[','').replace(']',''))) for key in selected_data.keys() if selected_data[key]]
+                calc_data_at_exptimes = {time:calc_results[min(calc_results.keys(),key=lambda x: abs(x-time))] for time in exp_times}
+
+                err_sum = 0
+                for exptime in exp_times:
+                    for keyindex in selected_key_index:
+                        err_sum += (list(filter(lambda x: x["time"]==exptime,exp_data))[0][keyindex[0]] - calc_data_at_exptimes[exptime][keyindex[1]])**2
+                return err_sum
+        
+            k1 = trial.suggest_float(opt_param["id"],opt_param["min"],opt_param["max"])
+            trial_params = org_params_input.copy()
+            trial_params[int(re.sub(r'\D', '',opt_param["id"]))] = k1
+            calc_results = calcby_sympy(trial_params)
+            return calc_error()
+        
+        study = optuna.create_study()
+        study.optimize(objective, n_trials=50)
+
+        print("【最適化後パラメータ】",study.best_params)
+        index = int(re.sub(r'\D', '',opt_param["id"]))
+        print(study.best_params)
+        optimized_param = study.best_params['r'+str(index)]
+        org_params_input[index]=optimized_param
+        calc_results = calcby_sympy(org_params_input)
+
+        recommend_opt_param = {'id': opt_param['id'], 'min': optimized_param*0.8, 'max': optimized_param*1.2}
+        return [calc_results,org_params_input,recommend_opt_param]
     
-    solver = DiffEqOptTool(funcEq,len(org_params_input),time_,init_y_input)
-    return solver.solveDiffEq(org_params_input)
-
-
-if __name__=='__main__':
-    time_ = np.linspace(0,100,101)
-    init_y = [100,100,0,0,0]
-    org_params = [0.1,0.2]
-
-    expressions = ["- k[0] * Y[0] * Y[1]",
-                    "- k[0] * Y[0] * Y[1]",
-                    "k[0] * Y[0] * Y[1] - k[1] * Y[2] * Y[3]",
-                    "k[0] * Y[0] * Y[1] - k[1] * Y[2] * Y[3]",
-                    "k[1] * Y[2] * Y[3]"]
-
-    # init_y=[0, 0.1, 0, 0, 0.1]
-    # expressions = ['1-1', '-k[1]*Y[1]*Y[4]', 'k[1]*Y[1]*Y[4]', 'k[1]*Y[1]*Y[4]', '-k[1]*Y[1]*Y[4]']
-    # org_params = [0, 0.05]
-
-    def funcEq(T, Y, PARAMS):
-        parser = MyTransformer.EquationParser(PARAMS,Y) # parseする前に各ステップにおけるYを格納する必要があるため、ここでパーサーをインスタンス化する必要がある
-        ret = [parser.parse(expr) for expr in expressions]
-        return ret
-
-    solver = DiffEqOptTool(funcEq,len(org_params),time_,init_y)
-    print(solver.solveDiffEq(org_params))
+    return [calc_results,org_params_input]

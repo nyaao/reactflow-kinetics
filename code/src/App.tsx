@@ -1,17 +1,15 @@
 import React from 'react';
-import { ThemeProvider } from '@mui/material/styles';
-import { CssBaseline } from '@mui/material';
-import { myTheme } from './content/myTheme';
-import { AppMain } from './content/AppMain';
+import { ThemeProvider } from "@emotion/react";
+import { CssBaseline } from "@mui/material";
+import AppMain from './contents/App/AppMain';
+import { myTheme } from './contents/App/myTheme';
 
 function App() {
   return (
-    <div>
-      <ThemeProvider theme={myTheme}>
-        <CssBaseline/>
-          <AppMain/>
-      </ThemeProvider>
-    </div>
+    <ThemeProvider theme={myTheme}>
+      <CssBaseline/>
+        <AppMain/>
+    </ThemeProvider>
   );
 }
 
