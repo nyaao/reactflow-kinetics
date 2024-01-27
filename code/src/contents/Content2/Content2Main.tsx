@@ -15,6 +15,8 @@ type Content2Props = {
   reactionRateConstant:{[key: string]: number}
   setReactionRateConstant:(reactionRateConstant:{[key: string]: number})=>void;
   handleCalcConcData:()=>void;
+  optRanges: {id:string, opt:boolean, min:number, max:number}[]
+  handleOptRanges: (newrange: {id: string,opt: boolean,min: number,max: number}[]) => void;
 }
 
 const Content2Main=(props:Content2Props)=>{
@@ -40,6 +42,8 @@ const Content2Main=(props:Content2Props)=>{
             <ReactionRateInput
               reactionRateConstant={props.reactionRateConstant}
               setReactionRateConstant={props.setReactionRateConstant}
+              optRanges={props.optRanges}
+              handleOptRanges={props.handleOptRanges}
             />
           </Box>
         </Paper>

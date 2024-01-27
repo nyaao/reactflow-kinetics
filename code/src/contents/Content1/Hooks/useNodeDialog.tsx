@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Node } from 'reactflow';
-import formatNumericText from '../../functions/formatNumericText'
+import formatNumericText from '../../formatNumericText';
 
 
 type NodeDialogHook = {

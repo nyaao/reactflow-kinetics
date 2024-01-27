@@ -6,7 +6,8 @@ const useFileHandler=(
   setEdges:(edges:Edge[])=>void,
   setExpConcData:(data:{[key: string]: number;}[])=>void,
   setSelectedDatakeys:(data:{[key:string]:boolean})=>void,
-  setIntegralRange:(data:{min:number,max:number})=>void
+  setIntegralRange:(data:{min:number,max:number})=>void,
+  handleOptRanges: (newranges: {id: string,opt: boolean,min: number,max: number}[]) => void,
 )=>{
 
   const handleSaveExcel=(
@@ -16,6 +17,7 @@ const useFileHandler=(
     calcConcData:{[key: string]: number;}[],
     selectedDataKeys:{[key:string]:boolean},
     integralRange:{min: number,max: number},
+    optRanges:{id:string,opt:boolean,min:number,max:number}[]
   )=>{
     const workbook = XLSX.utils.book_new();
 
@@ -64,6 +66,9 @@ const useFileHandler=(
     const wsIntegralRange = XLSX.utils.json_to_sheet([integralRange]);
     XLSX.utils.book_append_sheet(workbook, wsIntegralRange, 'integralrange');
 
+    const wsOptRanges = XLSX.utils.json_to_sheet(optRanges);
+    XLSX.utils.book_append_sheet(workbook, wsOptRanges, 'optranges');
+
     XLSX.writeFile(workbook, "test.xlsx");
   }
 
@@ -90,7 +95,7 @@ const useFileHandler=(
             }
             // load Nodes
             const sheetNodes = workbook.Sheets["nodes"];
-            const jsonDataNodes = XLSX.utils.sheet_to_json(sheetNodes);
+            const jsonDataNodes:Node[] = XLSX.utils.sheet_to_json(sheetNodes);
             const loadObjectNodes = jsonDataNodes.map((node:Node)=>{
               const keys= Object.keys(node) as (keyof Node)[];
               const transformedObject = Object.fromEntries(
@@ -111,13 +116,13 @@ const useFileHandler=(
               );
               return transformedObject;
             })
-            setNodes(loadObjectNodes);
+            setNodes(loadObjectNodes as Node[]);
           }
 
           const readEdges=()=>{
             // load Edges
             const sheetEdges = workbook.Sheets["edges"];
-            const jsonDataEdges = XLSX.utils.sheet_to_json(sheetEdges);
+            const jsonDataEdges:Edge[] = XLSX.utils.sheet_to_json(sheetEdges);
 
             const loadObjectEdges = jsonDataEdges.map((edge:Edge)=>{
               const keys= Object.keys(edge) as (keyof Edge)[];
@@ -134,28 +139,35 @@ const useFileHandler=(
               );
               return transformedObject;
             })
-            setEdges(loadObjectEdges);
+            setEdges(loadObjectEdges as Edge[]);
           }
 
           const readExpConcData=()=>{
             // load expConcData
             const sheetExpData = workbook.Sheets["expdata"];
-            const jsonDataExpData = XLSX.utils.sheet_to_json(sheetExpData);
+            const jsonDataExpData:{[key:string]:number}[] = XLSX.utils.sheet_to_json(sheetExpData);
             setExpConcData(jsonDataExpData);
           }
 
           const readSelectedDataKeys=()=>{
             // load selectedDatakeys
             const sheetSelectedDataKeys = workbook.Sheets["selecteddatakeys"];
-            const jsonDataSelectedDataKeys= XLSX.utils.sheet_to_json(sheetSelectedDataKeys);
+            const jsonDataSelectedDataKeys:{[key:string]:boolean}[]= XLSX.utils.sheet_to_json(sheetSelectedDataKeys);
             setSelectedDatakeys(jsonDataSelectedDataKeys[0]);
           }
 
           const readIntegralRange=()=>{
             // load integralRange
             const sheetIntegralRange = workbook.Sheets["integralrange"];
-            const jsonDataIntegralRange = XLSX.utils.sheet_to_json(sheetIntegralRange);
+            const jsonDataIntegralRange:{min: number,max: number}[] = XLSX.utils.sheet_to_json(sheetIntegralRange);
             setIntegralRange(jsonDataIntegralRange[0]);
+          }
+
+          const readOptRanges=()=>{
+            // load optRanges
+            const sheetOptRanges = workbook.Sheets["optranges"];
+            const jsonDataOptRanges:{id: string,opt: boolean,min: number,max: number}[] = XLSX.utils.sheet_to_json(sheetOptRanges);
+            handleOptRanges(jsonDataOptRanges);
           }
 
           readNodes();
@@ -163,6 +175,7 @@ const useFileHandler=(
           readExpConcData();
           readSelectedDataKeys();
           readIntegralRange();
+          readOptRanges();
         }
       }
       reader.readAsBinaryString(files[0])

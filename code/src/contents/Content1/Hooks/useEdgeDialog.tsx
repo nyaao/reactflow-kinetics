@@ -1,7 +1,8 @@
 // useNodeDialog.ts
 import { useCallback, useState } from 'react';
 import { Edge } from 'reactflow';
-import formatNumericText from '../../functions/formatNumericText'
+import formatNumericText from '../../formatNumericText';
+
 
 type EdgeDialogHook = {
   tmpEdge: Edge;

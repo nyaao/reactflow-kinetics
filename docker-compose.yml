@@ -19,21 +19,21 @@ services:
     depends_on:
       - db
 
-  # web:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   #command: sh -c "cd /frontend/my-react-app && npm start"
-  #   #command: tail -f /dev/null
-  #   #command: yarn start
-  #   volumes:
-  #     - ./code:/code:cached
-  #     - node_modules_volume:/code/node_modules
-  #   ports:
-  #     - "3000:3000"
-  #   tty : true
-  #   # environment:
-  #     # - WATCHPACK_POLLING=true
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    #command: sh -c "cd /frontend/my-react-app && npm start"
+    #command: tail -f /dev/null
+    #command: yarn start
+    volumes:
+      - ./code:/code:cached
+      - node_modules_volume:/code/node_modules
+    ports:
+      - "3000:3000"
+    tty : true
+    # environment:
+      # - WATCHPACK_POLLING=true
 
 volumes:
   node_modules_volume:

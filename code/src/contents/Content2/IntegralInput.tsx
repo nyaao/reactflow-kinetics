@@ -1,6 +1,7 @@
 import { Grid, Stack, TextField, Button } from "@mui/material";
 import { useEffect, useState } from "react";
-import formatNumericText from '../functions/formatNumericText'
+import formatNumericText from "../formatNumericText";
+
 
 type Props={
   integralRange: {min:number, max:number},

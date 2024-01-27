@@ -1,7 +1,7 @@
 import { Dialog, Typography, DialogContent, TextField, DialogActions, Button } from "@mui/material";
 import { GridValidRowModel } from "@mui/x-data-grid";
 import { useState } from "react";
-import formatNumericText from '../../functions/formatNumericText'
+import formatNumericText from "../../formatNumericText";
 
 
 type Props = {
