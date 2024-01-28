@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Node } from "reactflow";
-import _ from 'lodash';
+import isEqualObjectArrays from "../../isEqualObjectArrays";
 
 type UseDataProps={
   nodes:Node[],
@@ -25,7 +25,7 @@ const useExpConcData=({nodes,setNodes}:UseDataProps)=>{
 
     // console.log(newdata);
 
-    if (_.isEqual(newdata,data))return; // dataとnewdataに違いがない場合は更新しない
+    if (isEqualObjectArrays(newdata,data))return; // dataとnewdataに違いがない場合は更新しない
     setData(newdata);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -55,7 +55,7 @@ const useExpConcData=({nodes,setNodes}:UseDataProps)=>{
 
     // console.log(updateNodes)
 
-    if (_.isEqual(updateNodes, nodes)) return; // nodesとupdateNodesに違いがない場合は更新しない
+    if (isEqualObjectArrays(updateNodes, nodes)) return; // nodesとupdateNodesに違いがない場合は更新しない
     setNodes(updateNodes);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

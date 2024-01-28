@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { Node } from "reactflow";
+import isEqualObjectArrays from "../../isEqualObjectArrays";
 
 const useOptRange=(nodes:Node[])=>{
   const [optRanges, setOptRanges] = useState<{id:string, opt:boolean, min:number, max:number}[]>([]);
 
   useEffect(()=>{
-    console.log("Before optRanges Update", optRanges);
     const reaction_nodes = nodes.filter(node=>node.type==='reaction')
-    console.log(reaction_nodes);
     const newOptRange = (reaction_nodes.map((node)=>(
       optRanges.filter(optrange=>optrange.id===node.id)[0]===undefined ? // reaction_nodeのidはr1,r2など、optrangeのidはk[1],k[2]など、なので常に初期化される状態になってしまっている
       {
@@ -25,7 +24,7 @@ const useOptRange=(nodes:Node[])=>{
         max:optRanges.filter(optrange=>optrange.id===node.id)[0]['max'],
       }
     )))
-    if(JSON.stringify(newOptRange)===JSON.stringify(optRanges))return;
+    if(isEqualObjectArrays(newOptRange,optRanges))return;
     console.log("Before optRanges Update", optRanges);
     console.log("After", newOptRange);
     setOptRanges(newOptRange);

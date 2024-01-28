@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { Node } from "reactflow";
+import isEqualObjects from "../../isEqualObjects";
+import isEqualObjectArrays from "../../isEqualObjectArrays";
 
 const useReactionRateConstant=(nodes:Node[],setNodes:(nodes:Node[])=>void)=>{
   const [reactionRateConstant, setReactionRateConstant] = useState<{[key:string]:number}>({})
@@ -9,7 +11,7 @@ const useReactionRateConstant=(nodes:Node[],setNodes:(nodes:Node[])=>void)=>{
     const newReactionRateConstant:{[key:string]:number} = Object.fromEntries(reactionNodes.map(reactionNode=>["k["+reactionNode.id.replace("r","")+"]",reactionNode.data.kinetic_constant.value]));
     // {'[k1]:0.1,...'}
 
-    if(JSON.stringify(newReactionRateConstant)===JSON.stringify(reactionRateConstant))return;
+    if(isEqualObjects(newReactionRateConstant,reactionRateConstant))return;
     setReactionRateConstant(newReactionRateConstant);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[nodes])
@@ -28,7 +30,7 @@ const useReactionRateConstant=(nodes:Node[],setNodes:(nodes:Node[])=>void)=>{
         }
       }
     })
-    if(JSON.stringify(updateNodes)===JSON.stringify(nodes))return;
+    if(isEqualObjectArrays(updateNodes,nodes))return;
     setNodes(updateNodes);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   },[reactionRateConstant])

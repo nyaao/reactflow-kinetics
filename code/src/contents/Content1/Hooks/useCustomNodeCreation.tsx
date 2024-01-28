@@ -1,22 +1,7 @@
 import { Node, XYPosition, ReactFlowInstance } from "reactflow";
 import useNodeIDManager from "./useNodeIDManager";
 import { useCallback } from "react";
-
-const convertNumberToExcelColumn = (num: number): string | null => {
-  if (num <= 0) {
-    return null;
-  }
-
-  let temp,
-    letter = '';
-  while (num > 0) {
-    temp = (num - 1) % 26;
-    letter = String.fromCharCode(temp + 65) + letter;
-    num = (num - temp - 1) / 26;
-  }
-  return letter;
-};
-
+import convertNumberToExcelColumn from "../../convertNumberToExcelColumn";
 
 const useCustomNodeCreation=(nodes:Node[])=>{
   const getNextID = useNodeIDManager();

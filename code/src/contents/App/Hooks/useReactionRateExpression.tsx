@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import urls from "../private";
 import { Node,Edge } from "reactflow";
+import isEqualObjects from "../../isEqualObjects";
 
 const createKeyTranslationSet=(nodes:Node[])=>{
   const keyTranslationSet_material = Object.assign({},...nodes
@@ -29,18 +30,6 @@ const createReactionRateExpression=(nodes:Node[])=>{
   return reactionRateExpression;
 }
 
-const sortObject=(obj:{[key: string]: string} | null)=>{
-  if (obj === null) {return null}
-
-  const sortedObj:{[key: string]: string}  = {};
-  Object.keys(obj)
-    .sort()
-    .forEach((key) => {
-      sortedObj[key] = obj[key];
-    });
-  return sortedObj;
-}
-
 const useReactionRateExpressions=(nodes:Node[],edges:Edge[])=>{
   const [keyTranslationSet, setKeyTranslationSet] = useState<{[key:string]:string}|null>(null)
   const [reactionRateExpression, setReactionRateExpression] = useState<{[key:string]:string}|null>(null)
@@ -53,7 +42,7 @@ const useReactionRateExpressions=(nodes:Node[],edges:Edge[])=>{
     // APIから帰ってきたnodeにしかnn.data.equationは存在しない。下行のnewReactionRateExpressionは常に{}になる
     // const newReactionRateExpression = createReactionRateExpression(nodes);
     // そのため無限ループ抑制のためには使用できない
-    if(JSON.stringify(sortObject(keyTranslationSet))===JSON.stringify(sortObject(newKeyTranslationSet))) return;
+    if(isEqualObjects(keyTranslationSet,newKeyTranslationSet)) return;
 
     axios.post(urls.createEquation,{body:{nodes:nodes,edges:edges}})
     .then((res)=>{
