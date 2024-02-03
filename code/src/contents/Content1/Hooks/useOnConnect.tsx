@@ -11,6 +11,8 @@ const createCustomEdgeParams=(params: Edge<any> | Connection)=>{
     const target = params.target ? params.target : "";
     const targethandle = params.targetHandle ? params.targetHandle : "";
 
+    if(source[0]===target[0]) return;
+
     const newedge:Edge = {
       id: 'e'+source+sourcehandle+'-'+target+targethandle,
       source: source,
@@ -33,7 +35,7 @@ const useOnConnect=({setEdges}:UseOnConnectProps)=>{
   const onConnect = useCallback(
     (params: Edge | Connection) => {
       const newedgeparams = createCustomEdgeParams(params);
-      setEdges((eds) => addEdge(newedgeparams, eds));
+      newedgeparams && setEdges((eds) => addEdge(newedgeparams, eds));
     }, [setEdges]);
 
   return [{onConnect}] as const;
